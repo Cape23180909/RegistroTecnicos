@@ -11,7 +11,7 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20240827035435_Tecnicos")]
+    [Migration("20240827125423_Tecnicos")]
     partial class Tecnicos
     {
         /// <inheritdoc />
@@ -26,7 +26,7 @@ namespace RegistroTecnicos.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Nombre")
+                    b.Property<string>("Nombres")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
