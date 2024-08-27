@@ -19,28 +19,28 @@ namespace RegistroTecnicos.Services
             return await Contexto.Tecnicos.AnyAsync(t => t.TecnicoId == tecnicoId);
         }
         //Metodo Insertar
-        private async Task<bool> Insertar(Tecnicos tecnicos)
+        private async Task<bool> Insertar(Tecnicos tecnico)
         {
-            Contexto.Tecnicos.Add(tecnicos);
+            Contexto.Tecnicos.Add(tecnico);
             return await Contexto.SaveChangesAsync() > 0;
 
         }
         //Metodo Modificar 
-        private async Task<bool> Modificar(Tecnicos tecnicos)
+        private async Task<bool> Modificar(Tecnicos tecnico)
         {
-            Contexto.Tecnicos.Update(tecnicos);
+            Contexto.Tecnicos.Update(tecnico);
             var Modificado = await Contexto.SaveChangesAsync() > 0;
-            Contexto.Entry(tecnicos).State = EntityState.Detached;
+            Contexto.Entry(tecnico).State = EntityState.Detached;
             return Modificado;
         }
         //Metodo Guardar
-        public async Task<bool> Guardar(Tecnicos tecnicos)
+        public async Task<bool> Guardar(Tecnicos tecnico)
         {
-            if (!await Existe(tecnicos.TecnicoId))
+            if (!await Existe(tecnico.TecnicoId))
 
-                return await Insertar(tecnicos);
+                return await Insertar(tecnico);
             else
-                return await Modificar(tecnicos);
+                return await Modificar(tecnico);
         }
         //Metodo Eliminar 
         public async Task<bool> Eliminar(int id)
