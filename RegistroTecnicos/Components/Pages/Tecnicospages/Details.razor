@@ -1,0 +1,47 @@
+﻿@page "/Articulos/Details"
+@page "/Articulos/Details/{ArticuloId:int}"
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles</PageTitle>
+
+@if (tecnico != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header bg-primary text-center text-white py-2 rounded">
+                <h3 style="font-weight: bold;" class="font-weight-bold">Detalles del T&eacute;cnico</h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>T&eacute;cnicoId:</strong> @tecnico.TecnicoId</li>
+                                <li><strong>Nombres:</strong> @tecnico.Nombres</li>
+                                <li><strong>SueldoHora:</strong> @tecnico.Sueldohora</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="/Tecnico/Index" class="btn btn-outline-danger">
+                <Icon Name="IconName.Arrow90DegLeft" /> Volver
+            </a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int ArticuloId { get; set; }
+    private Tecnicos tecnico;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tecnico = await tecnicoService.Buscar(ArticuloId);
+    }
+}
