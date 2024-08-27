@@ -1,0 +1,89 @@
+﻿@page "/Tecnico/Delete/{TecnicoId:int}"
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Técnico</PageTitle>
+
+<div class="container">
+    <div class="card shadow-header">
+        <div class="card-header bg-primary text-white text-center py-2 rounded">
+            <h3><strong>Eliminar Técnico</strong></h3>
+        </div>
+
+        <div class="card-header text-center">
+            <h3 class="text-danger">¿Estás seguro de que quieres eliminar este técnico?</h3>
+        </div>
+
+        <div class="container ">
+            <div class="row justify-content-center ">
+                <div class="col-md-6">
+                    <div class="card shadow-lg ">
+                        <div class="card-header ">
+                            <h3 class="text-center "><strong>Datos del técnico</strong></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="border-primary border-2 borde">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <ul class="list-unstyled ">
+                                                <li><strong>TécnicoId:</strong> @tecnico.TecnicoId</li>
+                                                <li><strong>Nombre:</strong> @tecnico.Nombres</li>
+                                                <li><strong>SueldoHora:</strong> @tecnico.Sueldohora</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer text-center">
+            <button type="button" class="btn btn-outline-danger" @onclick="EliminarTecnico"><i class="bi bi-trash-fill"></i> Eliminar</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-arrow-90deg-left"></i> Volver</button>
+        </div>
+    </div>
+</div>
+
+@if (tecnico == null)
+{
+    <p>Técnico no encontrado.</p>
+}
+
+@code {
+    [Parameter]
+    public int TecnicoId { get; set; }
+    public Tecnicos? tecnico { get; set; } = new Tecnicos();
+    private bool existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TecnicoId != 0)
+        {
+            tecnico = await tecnicoService.Buscar(TecnicoId);
+        }
+    }
+
+    public async Task EliminarTecnico()
+    {
+        if (TecnicoId == 0 || tecnico == null)
+        {
+            return;
+        }
+        if (await tecnicoService.Eliminar(TecnicoId))
+        {
+            Volver();
+        }
+    }
+
+    public async Task Volver()
+    {
+        navigationManager.NavigateTo("/Tecnico/index");
+    }
+
+
+}
