@@ -1,0 +1,90 @@
+﻿@page "/Tecnico/Edit"
+@page "/Tecnico/Edit/{TecnicoId:int}"
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<EditForm Model="tecnicos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0" style="background-color white">
+
+        <div class="card-header bg-primary text-center text-white py-2 rounded">
+            <h3 style="font-weight: bold;" class="font-weight-bold">Modificar T&eacute;cnico</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="mb-3">
+                <label for="TecnicoId" class="form-label">T&eacute;cnicoId:</label>
+                <InputNumber @bind-Value="tecnicos.TecnicoId" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Nombres" class="form-label">Nombres:</label>
+                <InputText @bind-Value="tecnicos.Nombres" class="form-control" />
+                <ValidationMessage For="@(() => tecnicos.Nombres)" />
+            </div>
+
+            <div class="mb-3">
+                <label for="SueldoHora" class="form-label">SueldoHora:</label>
+                <InputNumber @bind-Value="tecnicos.Sueldohora" class="form-control" />
+                <ValidationMessage For="@(() => tecnicos.Sueldohora)" />
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-lg-center text-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary" @onclick="Nuevo"><span class="bi bi-plus"></span>Nuevo</button>
+                <button type="submit" class="btn btn-outline-success"><span class="bi bi-check2-square"></span>Guardar</button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-90deg-left"></span>Volver</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public int TecnicoId { get; set; }
+    public Tecnicos tecnicos { get; set; } = new Tecnicos();
+    List<ToastMessage> mensajeToast = new List<ToastMessage>();
+    private bool existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tecnicos = await tecnicoService.Buscar(TecnicoId); 
+    }
+
+    public async Task<bool> Validar()
+    {
+        var ListaArrticulos = await tecnicoService.Listar(t => t.Nombres.ToLower() == tecnicos.Nombres.ToLower() && tecnicos.TecnicoId != TecnicoId);
+        return ListaArrticulos.Count == 0;
+    }
+
+    public async Task Nuevo()
+    {
+        tecnicos = new Tecnicos();
+        existe = false;
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            return;
+        }
+        var guardado = await tecnicoService.Guardar(tecnicos);
+        if (guardado)
+        {
+            Nuevo();
+        }
+    }
+    public async Task Volver()
+    {
+        navigationManager.NavigateTo("/Tecnico/Index");
+    }
+}
