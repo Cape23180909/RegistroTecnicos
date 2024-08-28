@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RegistroTecnicos.DAL;
 using RegistroTecnicos.Models;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq.Expressions;
+
 
 namespace RegistroTecnicos.Services
 {
@@ -13,10 +13,11 @@ namespace RegistroTecnicos.Services
         {
             Contexto = contexto;
         }
-        //Metodo Existe
-        public async Task<bool> Existe(int tecnicoId)
+        public async Task<bool> Existe (int id, string nombres)
         {
-            return await Contexto.Tecnicos.AnyAsync(t => t.TecnicoId == tecnicoId);
+         
+            return await Contexto.Tecnicos
+                .AnyAsync(t => t.TecnicoId != id && t.Nombres.Equals(nombres));
         }
         //Metodo Insertar
         private async Task<bool> Insertar(Tecnicos tecnico)
@@ -36,7 +37,7 @@ namespace RegistroTecnicos.Services
         //Metodo Guardar
         public async Task<bool> Guardar(Tecnicos tecnico)
         {
-            if (!await Existe(tecnico.TecnicoId))
+            if (!await Existe (tecnico.TecnicoId, tecnico.Nombres))
 
                 return await Insertar(tecnico);
             else
