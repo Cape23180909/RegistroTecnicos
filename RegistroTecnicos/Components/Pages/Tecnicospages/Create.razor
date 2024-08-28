@@ -73,7 +73,7 @@
     }
     public async Task<bool> Validar()
     {
-        existe = await tecnicoService.Existe(tecnicos.TecnicoId);
+        existe = await tecnicoService.Existe(tecnicos.TecnicoId, tecnicos.Nombres);
         return !existe;
     }
     public async Task Guardar()
