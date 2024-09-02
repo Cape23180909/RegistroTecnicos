@@ -8,36 +8,36 @@ namespace RegistroTecnicos.Services
 {
     public class TecnicoService
     {
-        private readonly Contexto Contexto;
+        private readonly Contexto _contexto;
         public TecnicoService(Contexto contexto)
         {
-            Contexto = contexto;
+            _contexto = contexto;
         }
-        public async Task<bool> Existe (int id)
+        public async Task<bool> Existe(int id, string nombre)
         {
-         
-            return await Contexto.Tecnicos
-                .AnyAsync(t => t.TecnicoId == id );
+
+            return await _contexto.Tecnicos
+                .AnyAsync(t => t.TecnicoId != id && t.Nombres.Equals(nombre) );
         }
         //Metodo Insertar
         private async Task<bool> Insertar(Tecnicos tecnico)
         {
-            Contexto.Tecnicos.Add(tecnico);
-            return await Contexto.SaveChangesAsync() > 0;
+            _contexto.Tecnicos.Add(tecnico);
+            return await _contexto.SaveChangesAsync() > 0;
 
         }
         //Metodo Modificar 
         private async Task<bool> Modificar(Tecnicos tecnico)
         {
-            Contexto.Tecnicos.Update(tecnico);
-            var Modificado = await Contexto.SaveChangesAsync() > 0;
-            Contexto.Entry(tecnico).State = EntityState.Detached;
+            _contexto.Tecnicos.Update(tecnico);
+            var Modificado = await _contexto.SaveChangesAsync() > 0;
+            _contexto.Entry(tecnico).State = EntityState.Detached;
             return Modificado;
         }
         //Metodo Guardar
         public async Task<bool> Guardar(Tecnicos tecnico)
         {
-            if (!await Existe (tecnico.TecnicoId))
+            if (!await Existe(tecnico.TecnicoId, tecnico.Nombres))
 
                 return await Insertar(tecnico);
             else
@@ -46,7 +46,7 @@ namespace RegistroTecnicos.Services
         //Metodo Eliminar 
         public async Task<bool> Eliminar(int id)
         {
-            var EliminarTecnico = await Contexto.Tecnicos
+            var EliminarTecnico = await _contexto.Tecnicos
                 .Where(t => t.TecnicoId == id)
                 .ExecuteDeleteAsync();
             return EliminarTecnico > 0;
@@ -54,14 +54,14 @@ namespace RegistroTecnicos.Services
         //Metodo Buscar 
         public async Task<Tecnicos?> Buscar(int id)
         {
-            return await Contexto.Tecnicos
+            return await _contexto.Tecnicos
                 .AsNoTracking()
                 .FirstOrDefaultAsync(t => t.TecnicoId == id);
         }
         //Metodo Listar
         public async Task<List<Tecnicos>> Listar(Expression<Func<Tecnicos, bool>> criterio)
         {
-            return await Contexto.Tecnicos
+            return await _contexto.Tecnicos
                 .Where(criterio)
                 .ToListAsync();
         }
