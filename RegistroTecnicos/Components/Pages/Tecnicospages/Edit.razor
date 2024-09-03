@@ -2,6 +2,7 @@
 @page "/Tecnico/Edit/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 @rendermode InteractiveServer
 
 <EditForm Model="tecnicos" OnValidSubmit="Guardar">
@@ -55,7 +56,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        tecnicos = await tecnicoService.Buscar(TecnicoId); 
+        tecnicos = await tecnicoService.Buscar(TecnicoId);
     }
 
     public async Task<bool> Validar()
@@ -74,11 +75,21 @@
     {
         if (!await Validar())
         {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Validacion",
+            helpText: "",
+            message: "Ya Existe un tecnico con ese nombre en la consulta."));
             return;
         }
         var guardado = await tecnicoService.Guardar(tecnicos);
         if (guardado)
         {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Validacion",
+            helpText: "",
+            message: "Se a modificado el tecnico correctamente."));
             Nuevo();
         }
     }
