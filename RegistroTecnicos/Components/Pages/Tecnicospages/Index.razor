@@ -3,7 +3,8 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<EditForm Model="ListaTecnicos" class="border shadow-lg p-3 rounded">
+<PageTitle>Consulta de tecnicos</PageTitle>
+
     <div class="card-header bg-primary text-center text-white py-2 rounded">
         <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de T&eacute;cnicos</h3>
     </div>
@@ -51,7 +52,6 @@
 
     </div>
 
-</EditForm>
 
 @code {
     public Tecnicos tecnicos { get; set; } = new Tecnicos();
