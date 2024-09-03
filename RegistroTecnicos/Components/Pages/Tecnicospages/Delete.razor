@@ -1,6 +1,7 @@
 ﻿@page "/Tecnico/Delete/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 @rendermode InteractiveServer
 
 <PageTitle>Eliminar Técnico</PageTitle>
@@ -76,6 +77,11 @@
         }
         if (await tecnicoService.Eliminar(TecnicoId))
         {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Validacion",
+            helpText: "",
+            message: "El tecnico se a eliminado correctamente."));
             Volver();
         }
     }
