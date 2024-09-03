@@ -1,6 +1,7 @@
 ﻿@page "/Tecnico/Create"
 @inject TecnicoService tecnicoService
 @inject NavigationManager navigationManager
+@inject ToastService toastService
 @rendermode InteractiveServer
 
 <EditForm Model="tecnicos" OnValidSubmit="Guardar">
@@ -38,18 +39,14 @@
                 <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-90deg-left"></span>Volver</button>
 
             </div>
-
         </div>
-
     </div>
-
 </EditForm>
 
 @code {
     [Parameter]
     public Tecnicos tecnicos { get; set; } = new Tecnicos();
     public int TecnicoId { get; set; }
-    List<ToastMessage> mensajeToast = new List<ToastMessage>();
     private bool existe = false;
 
     public async Task Nuevo()
@@ -72,19 +69,30 @@
     }
     public async Task<bool> Validar()
     {
-        existe = await tecnicoService.Existe(tecnicos.TecnicoId);
-        return !existe;
+        existe = await tecnicoService.ExisteNombreTecnico(tecnicos.Nombres, tecnicos.TecnicoId);
+        return existe;
     }
     public async Task Guardar()
     {
-        if (!await Validar())
+        if (await Validar())
         {
+            toastService.Notify(new(ToastType.Success,
+           iconName: IconName.None,
+           title: "Validacion",
+           helpText: "",
+           message: "Ya Existe un tecnico con ese nombre en la consulta."));
             return;
         }
         var guardado = await tecnicoService.Guardar(tecnicos);
         if (guardado)
         {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Guardado",
+            helpText: "",
+            message: "El tecnico se a guardado correctamente."));
             Nuevo();
+            Volver();
         }
     }
     public async Task Volver()
