@@ -12,18 +12,23 @@ public class TecnicoService
     {
         _contexto = contexto;
     }
-    public async Task<bool> Existe(int id, string nombre)
+    //Metodo Existe
+    public async Task<bool> Existe(int id)
     {
-
         return await _contexto.Tecnicos
-            .AnyAsync(t => t.TecnicoId != id && t.Nombres.Equals(nombre));
+            .AnyAsync(t => t.TecnicoId == id);
+    }
+    //Metodo el cual Nos Identifica si ese tecnico esta registrado en la base de datos
+    public async Task<bool> ExisteNombreTecnico( string nombre, int id)
+    {
+        return await _contexto.Tecnicos
+            .AnyAsync(t => t.Nombres.ToLower ().Equals(nombre.ToLower()) && t.TecnicoId != id);
     }
     //Metodo Insertar
     private async Task<bool> Insertar(Tecnicos tecnico)
     {
         _contexto.Tecnicos.Add(tecnico);
         return await _contexto.SaveChangesAsync() > 0;
-
     }
     //Metodo Modificar 
     private async Task<bool> Modificar(Tecnicos tecnico)
@@ -35,7 +40,7 @@ public class TecnicoService
     //Metodo Guardar
     public async Task<bool> Guardar(Tecnicos tecnico)
     {
-        if (!await Existe(tecnico.TecnicoId, tecnico.Nombres))
+        if (!await Existe(tecnico.TecnicoId))
 
             return await Insertar(tecnico);
         else
