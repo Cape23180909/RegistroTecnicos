@@ -54,8 +54,8 @@
 </EditForm>
 
 @code {
-    public Tecnicos tecnicos = new Tecnicos();
-    public List<Tecnicos> ListaTecnicos = new List<Tecnicos>();
+    public Tecnicos tecnicos { get; set; } = new Tecnicos();
+    public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
 
     protected override async Task OnInitializedAsync()
     {
