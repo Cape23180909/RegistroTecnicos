@@ -61,8 +61,8 @@
 
     public async Task<bool> Validar()
     {
-        var ListaArrticulos = await tecnicoService.Listar(t => t.Nombres.ToLower() == tecnicos.Nombres.ToLower() && tecnicos.TecnicoId != TecnicoId);
-        return ListaArrticulos.Count == 0;
+        var ListarTecnicos = await tecnicoService.Listar(t => t.Nombres.ToLower() == tecnicos.Nombres.ToLower() && tecnicos.TecnicoId != TecnicoId);
+        return ListarTecnicos.Count == 0;
     }
 
     public async Task Nuevo()
