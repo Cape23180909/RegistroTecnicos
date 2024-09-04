@@ -1,5 +1,5 @@
 ﻿@page "/Tecnico/Details"
-@page "/Tecnico/Details/{ArticuloId:int}"
+@page "/Tecnico/Details/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
@@ -37,11 +37,11 @@
 
 @code {
     [Parameter]
-    public int ArticuloId { get; set; }
+    public int TecnicoId { get; set; }
     private Tecnicos tecnico;
 
     protected override async Task OnInitializedAsync()
     {
-        tecnico = await tecnicoService.Buscar(ArticuloId);
+        tecnico = await tecnicoService.Buscar(TecnicoId);
     }
 }
