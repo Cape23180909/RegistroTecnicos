@@ -23,6 +23,19 @@ namespace RegistroTecnicos.Migrations
                 {
                     table.PrimaryKey("PK_Tecnicos", x => x.TecnicoId);
                 });
+
+            migrationBuilder.CreateTable(
+                name: "TiposTecnicos",
+                columns: table => new
+                {
+                    TipoId = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Descripcion = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TiposTecnicos", x => x.TipoId);
+                });
         }
 
         /// <inheritdoc />
@@ -30,6 +43,9 @@ namespace RegistroTecnicos.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Tecnicos");
+
+            migrationBuilder.DropTable(
+                name: "TiposTecnicos");
         }
     }
 }

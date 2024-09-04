@@ -11,7 +11,7 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20240831205757_Tecnicos")]
+    [Migration("20240904023031_Tecnicos")]
     partial class Tecnicos
     {
         /// <inheritdoc />
@@ -37,6 +37,21 @@ namespace RegistroTecnicos.Migrations
                     b.HasKey("TecnicoId");
 
                     b.ToTable("Tecnicos");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.TiposTecnicos", b =>
+                {
+                    b.Property<int>("TipoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("TipoId");
+
+                    b.ToTable("TiposTecnicos");
                 });
 #pragma warning restore 612, 618
         }
