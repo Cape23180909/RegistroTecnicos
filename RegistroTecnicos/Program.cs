@@ -20,6 +20,7 @@ namespace RegistroTecnicos
             builder.Services.AddBlazorBootstrap();
             //Injectamos el Service
             builder.Services.AddScoped<TecnicoService>();
+            builder.Services.AddScoped<TipoTecnicoService>();   
 
             var app = builder.Build();
 
