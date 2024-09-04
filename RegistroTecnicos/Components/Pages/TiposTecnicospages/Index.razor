@@ -1,0 +1,59 @@
+﻿@page "/TipoTecnico/Index"
+@inject TipoTecnicoService tipoTecnicoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Tipos de tecnicos</PageTitle>
+
+<div class="card-header bg-primary text-center text-white py-2 rounded">
+    <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de Tipos T&eacute;cnicos</h3>
+</div>
+
+<div class="col md-3 text-end">
+    <a href="/TipoTecnico/Create" class="btn btn-success"<Icon Name="IconName.Pencil"/>Crear</a>
+</div>
+
+<table class="table table-bordered  text-center">
+    <thead class="border-primary text-white">
+        <tr>
+            <th>TipoId</th>
+            <th>Descripci&oacute;n</th>
+            <th>Ver</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tecnicos in ListaTipoTecnico)
+        {
+            <tr>
+                <td>@tecnicos.TipoId</td>
+                <td>@tecnicos.Descripcion</td>
+
+                <td>
+                    <a href="" class="btn btn-outline-primary"><span class="bi bi-eye"></span></a>
+                </td>
+
+                <td>
+                    <a href="" class="btn btn-outline-secondary" style="color: #FF7043; border-color: #FF7043;" onmouseover="this.style.backgroundColor='#FF7043'; this.style.color='#FFFFFF';" onmouseout="this.style.backgroundColor='transparent'; this.style.color='#FF7043';"><span class="bi bi-pencil"></span></a>
+                </td>
+
+                <td>
+                    <a href="" class="btn btn-outline-danger"><span class="bi bi-trash"></span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<div class="card-footer text-start">
+    <p>Total de T&eacute;cnicos: @ListaTipoTecnico.Count</p>
+</div>
+
+@code {
+    public List<TiposTecnicos> ListaTipoTecnico { get; set; } = new List<TiposTecnicos>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaTipoTecnico = await tipoTecnicoService.Listar(t => true);
+    }
+}
