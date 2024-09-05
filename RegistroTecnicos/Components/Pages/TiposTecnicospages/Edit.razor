@@ -1,0 +1,104 @@
+﻿@page "/TipoTecnico/Edit"
+@page "/TipoTecnico/Edit/{TipoId:int}"
+@inject TipoTecnicoService tipoTecnicoService
+@inject NavigationManager navigationManager
+@inject ToastService toastService
+@rendermode InteractiveServer
+
+<EditForm Model="tipostecnicos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+    <div class="card shadow-lg border-0" style="background-color white">
+
+        <div class="card-header bg-primary text-center text-white py-2 rounded">
+            <h3 style="font-weight: bold;" class="font-weight-bold">Modificar Tipo T&eacute;cnico</h3>
+        </div>
+
+        <div class="card-body">
+
+            <div class="mb-3">
+                <label for="TecnicoId" class="form-label">TipoId:</label>
+                <InputNumber @bind-Value="tipostecnicos.TipoId" class="form-control" />
+            </div>
+
+            <div class="mb-3">
+                <label for="Nombres" class="form-label">Descripci&oacute;n:</label>
+                <InputText @bind-Value="tipostecnicos.Descripcion" class="form-control" />
+                <ValidationMessage For="@(() => tipostecnicos.Descripcion)" />
+            </div>
+        </div>
+
+        <div class="card-footer d-flex justify-content-lg-center text-center">
+            <div class="btn-group">
+                <button type="button" class="btn btn-outline-primary" @onclick="Nuevo"><span class="bi bi-plus"></span>Nuevo</button>
+                <button type="submit" class="btn btn-outline-success"><span class="bi bi-check2-square"></span>Guardar</button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-90deg-left"></span>Volver</button>
+
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TipoId { get; set; }
+    public TiposTecnicos? tipostecnicos { get; set; } = new TiposTecnicos();
+    private bool existe = false;
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        tipostecnicos = await tipoTecnicoService.Buscar(TipoId);
+    }
+
+    public async Task<bool> Validar()
+    {
+        var ListarTiposTecnicos = await tipoTecnicoService.Listar(t => t.Descripcion.ToLower() == tipostecnicos.Descripcion.ToLower() && tipostecnicos.TipoId != TipoId);
+        return ListarTiposTecnicos.Count == 0;
+    }
+
+    public async Task Nuevo()
+    {
+        tipostecnicos = new TiposTecnicos();
+        existe = false;
+    }
+    public async Task Buscar()
+    {
+        existe = false;
+        var encontrado = await tipoTecnicoService.Buscar(tipostecnicos.TipoId);
+        if (encontrado != null)
+        {
+            tipostecnicos = encontrado;
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            toastService.Notify(new(ToastType.Success,
+           iconName: IconName.None,
+           title: "Validacion",
+           helpText: "",
+           message: "Ya Existe un técnico con ese nombre en la consulta."));
+            return;
+        }
+        var guardado = await tipoTecnicoService.Guardar(tipostecnicos);
+        if (guardado)
+        {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Guardado",
+            helpText: "",
+            message: "El técnico se a guardado correctamente."));
+            Nuevo();
+        }
+    }
+    public async Task Volver()
+    {
+        navigationManager.NavigateTo("/TipoTecnico/Index");
+    }
+}
