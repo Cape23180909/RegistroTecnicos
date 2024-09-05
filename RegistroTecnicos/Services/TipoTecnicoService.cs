@@ -19,10 +19,10 @@ namespace RegistroTecnicos.Services;
             .TiposTecnicos.AnyAsync(t => t.TipoId == tipoTecnicoId);
     }
     //Metodo el cual Nos Identifica si ese tecnico esta registrado en la base de datos
-    public async Task<bool> ExisteNombreTecnico(string nombre, int id)
+    public async Task<bool> ExisteNombreTipoTecnico(string descripcion, int id)
     {
-        return await _contexto.Tecnicos
-            .AnyAsync(t => t.Nombres.ToLower().Equals(nombre.ToLower()) && t.TecnicoId != id);
+        return await _contexto.TiposTecnicos
+            .AnyAsync(t => t.Descripcion.ToLower().Equals(descripcion.ToLower()) && t.TipoId != id);
     }
     // Método Insertar
     private async Task<bool> Insertar(TiposTecnicos tipoTecnicos)
