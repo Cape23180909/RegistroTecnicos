@@ -5,8 +5,8 @@ using System.Linq.Expressions;
 
 namespace RegistroTecnicos.Services;
 
-    public class TipoTecnicoService
-    {
+public class TipoTecnicoService
+{
     private readonly Contexto _contexto;
     public TipoTecnicoService(Contexto contexto)
     {
@@ -28,7 +28,7 @@ namespace RegistroTecnicos.Services;
     private async Task<bool> Insertar(TiposTecnicos tipoTecnicos)
     {
         _contexto.TiposTecnicos.Add(tipoTecnicos);
-        return await _contexto                                                                 
+        return await _contexto
             .SaveChangesAsync() > 0;
     }
     // Método Modificar
@@ -49,9 +49,9 @@ namespace RegistroTecnicos.Services;
     // Método eliminar
     public async Task<bool> Eliminar(int id)
     {
-       var eliminarArticulo = await _contexto.TiposTecnicos
-            .Where(t =>t.TipoId == id)
-            .ExecuteDeleteAsync();
+        var eliminarArticulo = await _contexto.TiposTecnicos
+             .Where(t => t.TipoId == id)
+             .ExecuteDeleteAsync();
         return eliminarArticulo > 0;
     }
     // Método buscar

@@ -19,10 +19,10 @@ public class TecnicoService
             .AnyAsync(t => t.TecnicoId == id);
     }
     //Metodo el cual Nos Identifica si ese tecnico esta registrado en la base de datos
-    public async Task<bool> ExisteNombreTecnico( string nombre, int id)
+    public async Task<bool> ExisteNombreTecnico(string nombre, int id)
     {
         return await _contexto.Tecnicos
-            .AnyAsync(t => t.Nombres.ToLower ().Equals(nombre.ToLower()) && t.TecnicoId != id);
+            .AnyAsync(t => t.Nombres.ToLower().Equals(nombre.ToLower()) && t.TecnicoId != id);
     }
     //Metodo Insertar
     private async Task<bool> Insertar(Tecnicos tecnico)
