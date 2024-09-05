@@ -9,7 +9,7 @@
     <div class="card shadow-lg border-0" style="background-color white">
 
         <div class="card-header bg-primary text-center text-white py-2 rounded">
-            <h3 style="font-weight: bold;" class="font-weight-bold">Registrar Tipo T&eacute;cnicos</h3>
+            <h3 style="font-weight: bold;" class="font-weight-bold">Registrar Tipo T&eacute;cnico</h3>
         </div>
 
         <div class="card-body">
@@ -63,7 +63,7 @@
     }
     public async Task<bool> Validar()
     {
-        existe = await tipoTecnicoService.ExisteNombreTecnico(tipostecnicos.Descripcion, tipostecnicos.TipoId);
+        existe = await tipoTecnicoService.ExisteNombreTipoTecnico(tipostecnicos.Descripcion, tipostecnicos.TipoId);
         return existe;
     }
     public async Task Guardar()
