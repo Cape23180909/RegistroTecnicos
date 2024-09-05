@@ -71,13 +71,32 @@
 
     protected override async Task OnInitializedAsync()
     {
-        tecnicos = await tecnicoService.Buscar(TecnicoId);
+        tiposTecnicos = await tipoTecnicoService.Listar(t => true);
+        if (TecnicoId != 0)
+        {
+            await Buscar();
+        }
+    }
+
+    public async Task Buscar()
+    {
+        existe = false;
+        var tecnicoEncontrado = await tecnicoService.Buscar(TecnicoId);
+        if (tecnicoEncontrado != null)
+        {
+            tecnicos = tecnicoEncontrado;
+        }
+        else
+        {
+            Nuevo();
+        }
     }
 
     public async Task<bool> Validar()
     {
-        var ListarTecnicos = await tecnicoService.Listar(t => t.Nombres.ToLower() == tecnicos.Nombres.ToLower() && tecnicos.TecnicoId != TecnicoId);
-        return ListarTecnicos.Count == 0;
+        var listaTecnicos = await tecnicoService.Listar(t => t.Nombres.ToLower() == tecnicos.Nombres.ToLower() && t.TecnicoId != tecnicos.TecnicoId);
+        existe = listaTecnicos.Any();
+        return !existe;
     }
 
     public async Task Nuevo()
