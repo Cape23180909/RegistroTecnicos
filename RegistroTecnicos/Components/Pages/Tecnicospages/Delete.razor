@@ -1,5 +1,6 @@
 ﻿@page "/Tecnico/Delete/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
+@inject TipoTecnicoService tipoTecnicoService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 @rendermode InteractiveServer
@@ -31,6 +32,7 @@
                                             <ul class="list-unstyled ">
                                                 <li><strong>TécnicoId:</strong> @tecnico.TecnicoId</li>
                                                 <li><strong>Nombres:</strong> @tecnico.Nombres</li>
+                                                <li><strong>Tipot&eacute;cnico:</strong> @tipoDescripcion</li>
                                                 <li><strong>SueldoHora:</strong> @tecnico.Sueldohora</li>
                                             </ul>
                                         </div>
@@ -59,6 +61,7 @@
     [Parameter]
     public int TecnicoId { get; set; }
     public Tecnicos? tecnico { get; set; } = new Tecnicos();
+    public string tipoDescripcion { get; set; }
     private bool existe = false;
 
     protected override async Task OnInitializedAsync()
@@ -66,6 +69,11 @@
         if (TecnicoId != 0)
         {
             tecnico = await tecnicoService.Buscar(TecnicoId);
+            if (tecnico != null)
+            {
+                var tipo = await tipoTecnicoService.Buscar(tecnico.TipoId);
+                tipoDescripcion = tipo?.Descripcion ?? "Tipo no encontrado";
+            }
         }
     }
 

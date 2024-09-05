@@ -1,6 +1,7 @@
 ﻿@page "/Tecnico/Details"
 @page "/Tecnico/Details/{TecnicoId:int}"
 @inject TecnicoService tecnicoService
+@inject TipoTecnicoService tipoTecnicoService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -20,6 +21,7 @@
                             <ul class="list-unstyled">
                                 <li><strong>T&eacute;cnicoId:</strong> @tecnico.TecnicoId</li>
                                 <li><strong>Nombres:</strong> @tecnico.Nombres</li>
+                                <li><strong>Tipo t&eacute;cnico:</strong> @tipoDescripcion</li>
                                 <li><strong>SueldoHora:</strong> @tecnico.Sueldohora</li>
                             </ul>
                         </div>
@@ -38,10 +40,17 @@
 @code {
     [Parameter]
     public int TecnicoId { get; set; }
-    private Tecnicos tecnico;
+    public Tecnicos tecnico { get; set; }
+    public string tipoDescripcion { get; set; } = string.Empty;
 
     protected override async Task OnInitializedAsync()
     {
         tecnico = await tecnicoService.Buscar(TecnicoId);
+        if (tecnico != null)
+        {
+            var tipo = await tipoTecnicoService.Buscar(tecnico.TipoId);
+            tipoDescripcion = tipo?.Descripcion ?? "Tipo no encontrado";
+        }
     }
+
 }
