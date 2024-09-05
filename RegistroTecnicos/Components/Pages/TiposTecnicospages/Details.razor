@@ -1,0 +1,46 @@
+﻿@page "/TipoTecnico/Details/{TipoId:int}"
+@inject TipoTecnicoService tipoTecnicoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles</PageTitle>
+
+@if (tipotecnico != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+
+            <div class="card-header bg-primary text-center text-white py-2 rounded">
+                <h3 style="font-weight: bold;" class="font-weight-bold">Detalles del  Tipo T&eacute;cnico</h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>TipoId:</strong> @tipotecnico.TipoId</li>
+                                <li><strong>Descripci&oacute;n:</strong> @tipotecnico.Descripcion</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="/TipoTecnico/Index" class="btn btn-outline-danger">
+                <Icon Name="IconName.Arrow90DegLeft" /> Volver
+            </a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int TipoId { get; set; }
+    private TiposTecnicos tipotecnico;
+
+    protected override async Task OnInitializedAsync()
+    {
+        tipotecnico = await tipoTecnicoService.Buscar(TipoId);
+    }
+}
