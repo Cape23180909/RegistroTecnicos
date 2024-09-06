@@ -16,13 +16,13 @@ public class TipoTecnicoService
     public async Task<bool> Existe(int tipoTecnicoId)
     {
         return await _contexto
-            .TiposTecnicos.AnyAsync(t => t.TipoId == tipoTecnicoId);
+            .TiposTecnicos.AnyAsync(t => t.TipoTecnicoId == tipoTecnicoId);
     }
     //Metodo el cual Nos Identifica si ese tecnico esta registrado en la base de datos
     public async Task<bool> ExisteNombreTipoTecnico(string descripcion, int id)
     {
         return await _contexto.TiposTecnicos
-            .AnyAsync(t => t.Descripcion.ToLower().Equals(descripcion.ToLower()) && t.TipoId != id);
+            .AnyAsync(t => t.Descripcion.ToLower().Equals(descripcion.ToLower()) && t.TipoTecnicoId != id);
     }
     // Método Insertar
     private async Task<bool> Insertar(TiposTecnicos tipoTecnicos)
@@ -41,7 +41,7 @@ public class TipoTecnicoService
     // Método guardar
     public async Task<bool> Guardar(TiposTecnicos tipoTecnico)
     {
-        if (!await Existe(tipoTecnico.TipoId))
+        if (!await Existe(tipoTecnico.TipoTecnicoId))
             return await Insertar(tipoTecnico);
         else
             return await Modificar(tipoTecnico);
@@ -50,7 +50,7 @@ public class TipoTecnicoService
     public async Task<bool> Eliminar(int id)
     {
         var eliminarArticulo = await _contexto.TiposTecnicos
-             .Where(t => t.TipoId == id)
+             .Where(t => t.TipoTecnicoId == id)
              .ExecuteDeleteAsync();
         return eliminarArticulo > 0;
     }
@@ -59,7 +59,7 @@ public class TipoTecnicoService
     {
         return await _contexto.TiposTecnicos
             .AsNoTracking()
-            .FirstOrDefaultAsync(t => t.TipoId == id);
+            .FirstOrDefaultAsync(t => t.TipoTecnicoId == id);
     }
     // Método listar
     public async Task<List<TiposTecnicos>> Listar(Expression<Func<TiposTecnicos, bool>> criterio)

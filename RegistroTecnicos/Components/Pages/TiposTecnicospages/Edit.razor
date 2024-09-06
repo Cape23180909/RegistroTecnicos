@@ -1,5 +1,5 @@
 ﻿@page "/TipoTecnico/Edit"
-@page "/TipoTecnico/Edit/{TipoId:int}"
+@page "/TipoTecnico/Edit/{TipoTecnicoId:int}"
 @inject TipoTecnicoService tipoTecnicoService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
@@ -17,7 +17,7 @@
 
             <div class="mb-3">
                 <label for="TecnicoId" class="form-label">TipoT&eacute;cnicoId:</label>
-                <InputNumber @bind-Value="tipostecnicos.TipoId" class="form-control" />
+                <InputNumber @bind-Value="tipostecnicos.TipoTecnicoId" class="form-control" />
             </div>
 
             <div class="mb-3">
@@ -40,19 +40,19 @@
 
 @code {
     [Parameter]
-    public int TipoId { get; set; }
+    public int TipoTecnicoId { get; set; }
     public TiposTecnicos? tipostecnicos { get; set; } = new TiposTecnicos();
     private bool existe = false;
 
 
     protected override async Task OnInitializedAsync()
     {
-        tipostecnicos = await tipoTecnicoService.Buscar(TipoId);
+        tipostecnicos = await tipoTecnicoService.Buscar(TipoTecnicoId);
     }
 
     public async Task<bool> Validar()
     {
-        var ListarTiposTecnicos = await tipoTecnicoService.Listar(t => t.Descripcion.ToLower() == tipostecnicos.Descripcion.ToLower() && tipostecnicos.TipoId != TipoId);
+        var ListarTiposTecnicos = await tipoTecnicoService.Listar(t => t.Descripcion.ToLower() == tipostecnicos.Descripcion.ToLower() && tipostecnicos.TipoTecnicoId != TipoTecnicoId);
         return ListarTiposTecnicos.Count == 0;
     }
 
@@ -64,7 +64,7 @@
     public async Task Buscar()
     {
         existe = false;
-        var encontrado = await tipoTecnicoService.Buscar(tipostecnicos.TipoId);
+        var encontrado = await tipoTecnicoService.Buscar(tipostecnicos.TipoTecnicoId);
         if (encontrado != null)
         {
             tipostecnicos = encontrado;

@@ -16,7 +16,7 @@
 
             <div class="mb-3">
                 <label for="TecnicoId" class="form-label">TipoT&eacute;cnicoId:</label>
-                <InputNumber @bind-Value="tipostecnicos.TipoId" class="form-control" />
+                <InputNumber @bind-Value="tipostecnicos.TipoTecnicoId" class="form-control" />
             </div>
 
             <div class="mb-3">
@@ -51,7 +51,7 @@
     public async Task Buscar()
     {
         existe = false;
-        var encontrado = await tipoTecnicoService.Buscar(tipostecnicos.TipoId);
+        var encontrado = await tipoTecnicoService.Buscar(tipostecnicos.TipoTecnicoId);
         if (encontrado != null)
         {
             tipostecnicos = encontrado;
@@ -63,7 +63,7 @@
     }
     public async Task<bool> Validar()
     {
-        existe = await tipoTecnicoService.ExisteNombreTipoTecnico(tipostecnicos.Descripcion, tipostecnicos.TipoId);
+        existe = await tipoTecnicoService.ExisteNombreTipoTecnico(tipostecnicos.Descripcion, tipostecnicos.TipoTecnicoId);
         return existe;
     }
     public async Task Guardar()

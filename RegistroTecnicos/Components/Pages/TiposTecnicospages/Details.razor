@@ -1,4 +1,4 @@
-﻿@page "/TipoTecnico/Details/{TipoId:int}"
+﻿@page "/TipoTecnico/Details/{TipoTecnicoId:int}"
 @inject TipoTecnicoService tipoTecnicoService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
@@ -18,7 +18,7 @@
                     <div class="col-md-6">
                         <div class="card-body">
                             <ul class="list-unstyled">
-                                <li><strong>TipoT&eacute;cnicoId:</strong> @tipotecnico.TipoId</li>
+                                <li><strong>TipoT&eacute;cnicoId:</strong> @tipotecnico.TipoTecnicoId</li>
                                 <li><strong>Descripci&oacute;n:</strong> @tipotecnico.Descripcion</li>
                             </ul>
                         </div>

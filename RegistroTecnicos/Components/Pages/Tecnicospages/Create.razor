@@ -26,7 +26,7 @@
                     <option value="0">Elija un tipo de tecnico</option>
                     @foreach (var tipo in tiposTecnicos)
                     {
-                        <option value="@tipo.TipoId">@tipo.Descripcion</option>
+                        <option value="@tipo.TipoTecnicoId">@tipo.Descripcion</option>
                     }
                 </InputSelect>
                 <ValidationMessage For="@(() => tecnicos.Sueldohora)" />
