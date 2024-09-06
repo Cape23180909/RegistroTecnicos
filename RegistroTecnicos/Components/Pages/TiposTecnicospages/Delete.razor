@@ -56,25 +56,25 @@
 
 @code {
     [Parameter]
-    public int TipoId { get; set; }
+    public int TipoTecnicoId { get; set; }
     public TiposTecnicos? tipotecnico { get; set; } = new TiposTecnicos();
     private bool existe = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (TipoId != 0)
+        if (TipoTecnicoId != 0)
         {
-            tipotecnico = await tipoTecnicoService.Buscar(TipoId);
+            tipotecnico = await tipoTecnicoService.Buscar(TipoTecnicoId);
         }
     }
 
     public async Task EliminarTipoTecnico()
     {
-        if (TipoId == 0 || tipotecnico == null)
+        if (TipoTecnicoId == 0 || tipotecnico == null)
         {
             return;
         }
-        if (await tipoTecnicoService.Eliminar(TipoId))
+        if (await tipoTecnicoService.Eliminar(TipoTecnicoId))
         {
             toastService.Notify(new(ToastType.Success,
             iconName: IconName.None,

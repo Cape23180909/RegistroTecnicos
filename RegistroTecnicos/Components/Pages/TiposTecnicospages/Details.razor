@@ -36,11 +36,11 @@
 
 @code {
     [Parameter]
-    public int TipoId { get; set; }
+    public int TipoTecnicoId { get; set; }
     private TiposTecnicos tipotecnico;
 
     protected override async Task OnInitializedAsync()
     {
-        tipotecnico = await tipoTecnicoService.Buscar(TipoId);
+        tipotecnico = await tipoTecnicoService.Buscar(TipoTecnicoId);
     }
 }
