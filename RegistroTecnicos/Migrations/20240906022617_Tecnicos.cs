@@ -14,13 +14,13 @@ namespace RegistroTecnicos.Migrations
                 name: "TiposTecnicos",
                 columns: table => new
                 {
-                    TipoId = table.Column<int>(type: "INTEGER", nullable: false)
+                    TipoTecnicoId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TiposTecnicos", x => x.TipoId);
+                    table.PrimaryKey("PK_TiposTecnicos", x => x.TipoTecnicoId);
                 });
 
             migrationBuilder.CreateTable(
@@ -40,14 +40,15 @@ namespace RegistroTecnicos.Migrations
                         name: "FK_Tecnicos_TiposTecnicos_TipoId",
                         column: x => x.TipoId,
                         principalTable: "TiposTecnicos",
-                        principalColumn: "TipoId",
+                        principalColumn: "TipoTecnicoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tecnicos_TipoId",
                 table: "Tecnicos",
-                column: "TipoId");
+                column: "TipoId",
+                unique: true);
         }
 
         /// <inheritdoc />
