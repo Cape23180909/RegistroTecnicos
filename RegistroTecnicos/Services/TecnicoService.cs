@@ -66,7 +66,7 @@ public class TecnicoService
     {
         return await _contexto.Tecnicos
             .AsNoTracking()
-            .Include(t => t.TiposTecnicos)
+            .Include(t => t.TiposTecnicosId)
             .Where(criterio)
             .ToListAsync();
     }
