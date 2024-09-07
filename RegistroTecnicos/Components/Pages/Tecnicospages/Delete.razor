@@ -71,7 +71,7 @@
             tecnico = await tecnicoService.Buscar(TecnicoId);
             if (tecnico != null)
             {
-                var tipo = await tipoTecnicoService.Buscar(tecnico.TipoId);
+                var tipo = await tipoTecnicoService.Buscar(TecnicoId);
                 tipoDescripcion = tipo?.Descripcion ?? "Tipo no encontrado";
             }
         }
