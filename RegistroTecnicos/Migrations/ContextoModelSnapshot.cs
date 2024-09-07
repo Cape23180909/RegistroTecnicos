@@ -34,14 +34,12 @@ namespace RegistroTecnicos.Migrations
                     b.Property<int>("TipoId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("TipoIds")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int?>("TiposTecnicosIdTipoTecnicoId")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("TecnicoId");
 
-                    b.HasIndex("TipoId")
-                        .IsUnique();
+                    b.HasIndex("TiposTecnicosIdTipoTecnicoId");
 
                     b.ToTable("Tecnicos");
                 });
@@ -63,13 +61,11 @@ namespace RegistroTecnicos.Migrations
 
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
                 {
-                    b.HasOne("RegistroTecnicos.Models.TiposTecnicos", "TiposTecnicos")
-                        .WithOne("Tecnicos")
-                        .HasForeignKey("RegistroTecnicos.Models.Tecnicos", "TipoId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("RegistroTecnicos.Models.TiposTecnicos", "TiposTecnicosId")
+                        .WithMany("Tecnicos")
+                        .HasForeignKey("TiposTecnicosIdTipoTecnicoId");
 
-                    b.Navigation("TiposTecnicos");
+                    b.Navigation("TiposTecnicosId");
                 });
 
             modelBuilder.Entity("RegistroTecnicos.Models.TiposTecnicos", b =>

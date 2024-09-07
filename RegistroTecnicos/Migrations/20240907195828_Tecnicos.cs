@@ -29,27 +29,25 @@ namespace RegistroTecnicos.Migrations
                 {
                     TecnicoId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    TipoIds = table.Column<string>(type: "TEXT", nullable: false),
                     Nombres = table.Column<string>(type: "TEXT", nullable: false),
                     Sueldohora = table.Column<decimal>(type: "TEXT", nullable: false),
+                    TiposTecnicosIdTipoTecnicoId = table.Column<int>(type: "INTEGER", nullable: true),
                     TipoId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Tecnicos", x => x.TecnicoId);
                     table.ForeignKey(
-                        name: "FK_Tecnicos_TiposTecnicos_TipoId",
-                        column: x => x.TipoId,
+                        name: "FK_Tecnicos_TiposTecnicos_TiposTecnicosIdTipoTecnicoId",
+                        column: x => x.TiposTecnicosIdTipoTecnicoId,
                         principalTable: "TiposTecnicos",
-                        principalColumn: "TipoTecnicoId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "TipoTecnicoId");
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Tecnicos_TipoId",
+                name: "IX_Tecnicos_TiposTecnicosIdTipoTecnicoId",
                 table: "Tecnicos",
-                column: "TipoId",
-                unique: true);
+                column: "TiposTecnicosIdTipoTecnicoId");
         }
 
         /// <inheritdoc />
