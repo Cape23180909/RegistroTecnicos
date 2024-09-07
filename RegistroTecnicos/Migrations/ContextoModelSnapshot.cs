@@ -34,6 +34,10 @@ namespace RegistroTecnicos.Migrations
                     b.Property<int>("TipoId")
                         .HasColumnType("INTEGER");
 
+                    b.Property<string>("TipoIds")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.HasKey("TecnicoId");
 
                     b.HasIndex("TipoId")
