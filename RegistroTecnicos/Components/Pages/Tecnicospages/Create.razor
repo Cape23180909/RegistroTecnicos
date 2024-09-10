@@ -14,12 +14,12 @@
         </div>
 
         <div class="card-body">
-
+            @*TecnicoId*@
             <div class="mb-3">
                 <label for="TecnicoId" class="form-label">T&eacute;cnicoId:</label>
                 <InputNumber @bind-Value="tecnicos.TecnicoId" class="form-control" />
             </div>
-
+            @*TipoTecnico*@
             <div class="mb-3">
                 <label> Tipo de T&eacute;cnico: </label>
                 <InputSelect @bind-Value="tecnicos.TipoId" class="form-control">
@@ -31,13 +31,13 @@
                 </InputSelect>
                 <ValidationMessage For="@(() => tecnicos.Sueldohora)" />
             </div>
-
+            @*Nombres*@
             <div class="mb-3">
                 <label for="Nombres" class="form-label">Nombres:</label>
                 <InputText @bind-Value="tecnicos.Nombres" class="form-control" />
                 <ValidationMessage For="@(() => tecnicos.Nombres)" />
             </div>
-
+            @*SueldoHora*@
             <div class="mb-3">
                 <label for="SueldoHora" class="form-label">SueldoHora:</label>
                 <InputNumber @bind-Value="tecnicos.Sueldohora" class="form-control" />
