@@ -15,7 +15,7 @@ public class Contexto : DbContext
         modelBuilder.Entity<Tecnicos>()
             .HasOne(tt => tt.TiposTecnicosId)
             .WithMany(t => t.Tecnicos)
-            .HasForeignKey(t => t.TipoId);
+            .HasForeignKey(t => t.TipoTecnicoId);
 
         base.OnModelCreating(modelBuilder);
     }
