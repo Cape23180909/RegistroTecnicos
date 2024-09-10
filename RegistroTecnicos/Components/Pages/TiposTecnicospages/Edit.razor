@@ -31,7 +31,7 @@
             <div class="btn-group">
                 <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span>Nuevo</button>
                 <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span>Guardar</button>
-                <button type="button" class="btn btn-outline-danger" @onclick="Volver"><span class="bi bi-arrow-bar-left"></span>Retroceder</button>
+                <button type="button" class="btn btn-outline-danger" @onclick="Retroceder"><span class="bi bi-arrow-bar-left"></span>Retroceder</button>
             </div>
         </div>
     </div>
@@ -93,10 +93,10 @@
             helpText: "",
             message: "El tipo técnico se a modificado con exito."));
             Nuevo();
-            Volver();
+            Retroceder();
         }
     }
-    public async Task Volver()
+    public async Task Retroceder()
     {
         navigationManager.NavigateTo("/TipoTecnico/Index");
     }
