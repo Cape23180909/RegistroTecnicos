@@ -14,14 +14,14 @@
         </div>
 
         <div class="card-body">
-
+            @*TipoTecnico*@
             <div class="mb-3">
                 <label for="TecnicoId" class="form-label">TipoT&eacute;cnicoId:</label>
                 <InputNumber @bind-Value="tipostecnicos.TipoTecnicoId" class="form-control" />
             </div>
-
+            @*Descripcion*@
             <div class="mb-3">
-                <label for="Nombres" class="form-label">Descripci&oacute;n:</label>
+                <label for="Descripcion" class="form-label">Descripci&oacute;n:</label>
                 <InputText @bind-Value="tipostecnicos.Descripcion" class="form-control" />
                 <ValidationMessage For="@(() => tipostecnicos.Descripcion)" />
             </div>
