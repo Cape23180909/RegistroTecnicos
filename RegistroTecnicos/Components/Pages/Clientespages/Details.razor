@@ -1,0 +1,43 @@
+﻿@page "/Cliente/Details/{ClienteId:int}"
+@inject ClienteService clienteService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+@if (clientes != null)
+{
+    <div class="container">
+        <div class="card shawdo lg">
+            <div class="card-header bg-primary text-center text-white py-2 rounded">
+                <h3 style="font-weight: bold;" class="font-weight-bold">Detalles del Cliente</h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>ClienteId:</strong>@clientes.ClienteId</li>
+                                <li><strong>Nombres:</strong>@clientes.Nombres</li>
+                                <li><strong>WhatsApp:</strong>@clientes.WhatsApp</li>
+                            </ul>
+                        </div
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <a href="/Cliente/Index" class="btn btn-outline-primary"><span class="bi bi-arrow-bar-left"></span>Retroceder</a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes clientes { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await clienteService.Buscar(ClienteId);
+    }
+
+}
