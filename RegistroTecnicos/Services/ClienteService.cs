@@ -15,6 +15,14 @@ public class ClienteService
     {
         _contexto = contexto;
     }
+
+    //Metodo el cual Nos Identifica si ese tecnico esta registrado en la base de datos
+    public async Task<bool> ExisteNombreCliente(string whatsApp, int id)
+    {
+        return await _contexto.Clientes
+            .AnyAsync(c => c.Nombres.ToLower().Equals(whatsApp.ToLower()) && c.ClienteId != id);
+    }
+
     //Metodo Existe
     public async Task<bool> Existe(int clienteId)
     {
