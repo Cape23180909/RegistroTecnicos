@@ -70,13 +70,18 @@
     }
     public async Task<bool> Validar()
     {
-        Existe = await clienteService.Existe(clientes.ClienteId);
-        return !Existe;
+        Existe = await clienteService.ExisteNombreCliente(clientes.WhatsApp, clientes.ClienteId, clientes.Nombres);
+        return Existe;
     }
     public async Task Guardar()
     {
-        if (!await Validar())
+        if (await Validar())
         {
+            toastService.Notify(new(ToastType.Success,
+           iconName: IconName.None,
+           title: "Validacion",
+           helpText: "",
+           message: "Ya Existe un cliente con ese nombre o numero de telefono en la consulta."));
             return;
         }
         var guardado = await clienteService.Guardar(clientes);
