@@ -1,0 +1,98 @@
+﻿@page "/Cliente/Delete/{ClienteId:int}"
+@inject ClienteService clienteService
+@inject NavigationManager navigationManager
+@inject ToastService toastService
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Técnico</PageTitle>
+
+<div class="container">
+    <div class="card shadow-header">
+        <div class="card-header bg-primary text-white text-center py-2 rounded">
+            <h3><strong>Eliminar Cliente</strong></h3>
+        </div>
+
+        <div class="card-header text-center">
+            <h3 class="text-danger">¿Estás seguro de que quieres eliminar este cliente?</h3>
+        </div>
+
+        <div class="container ">
+            <div class="row justify-content-center ">
+                <div class="col-md-6">
+                    <div class="card shadow-lg ">
+                        <div class="card-header ">
+                            <h3 class="text-center "><strong>Datos del cliente</strong></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="border-primary border-2 borde">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <ul class="list-unstyled ">
+                                                <li><strong>ClientesId:</strong> @clientes.ClienteId</li>
+                                                <li><strong>Nombres:</strong> @clientes.Nombres</li>
+                                                <li><strong>WhatsApp:</strong>@clientes.WhatsApp</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer text-center">
+            <button type="button" class="btn btn-outline-danger" @onclick="EliminarTecnico"><i class="bi bi-trash-fill"></i> Eliminar</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Retroceder"><i class="bi bi-box-arrow-left"></i> Retroceder</button>
+        </div>
+    </div>
+</div>
+
+@if (clientes == null)
+{
+    <p>Técnico no encontrado.</p>
+}
+
+@code {
+    [Parameter]
+    public int ClienteId { get; set; }
+    public Clientes? clientes { get; set; } = new Clientes();
+    public string tipoDescripcion { get; set; }
+    private bool existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (ClienteId != 0)
+        {
+            clientes = await clienteService.Buscar(ClienteId);
+            if (clientes != null)
+            {
+                var tipo = await clienteService.Buscar(ClienteId);
+            }
+        }
+    }
+
+    public async Task EliminarTecnico()
+    {
+        if (ClienteId == 0 || clientes == null)
+        {
+            return;
+        }
+        if (await clienteService.Eliminar(ClienteId))
+        {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Validacion",
+            helpText: "",
+            message: "El técnico se a eliminado correctamente."));
+            Retroceder();
+        }
+    }
+
+    public async Task Retroceder()
+    {
+        navigationManager.NavigateTo("/Cliente/Index");
+    }
+}
