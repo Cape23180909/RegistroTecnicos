@@ -10,15 +10,18 @@
 </div>
 
 <div class="col md-3 text-end">
-    <a href="" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+    <a href="/Cliente/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
 </div>
 
 <table class="table table-bordered text-center">
-    <thead class="bg-primary text-white">
+    <thead class="border-primary text-white">
         <tr>
             <th>ClienteId</th>
             <th>Nombres</th>
             <th>WhatsApp</th>
+            <th>Ver</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
         </tr>
     </thead>
     <tbody>
@@ -30,21 +33,24 @@
                 <td>@clientes.WhatsApp</td>
 
                 <td>
-                    <a href="" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
+                    <a href="/Cliente/Details/@clientes.ClienteId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
                 </td>
 
                 <td>
-                    <a href="" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
+                    <a href="/Cliente/Edit/@clientes.ClienteId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
                 </td>
 
                 <td>
-                    <a href="" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
+                    <a href="/Cliente/Delete/@clientes.ClienteId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
                 </td>
             </tr>
         }
     </tbody>
 
 </table>
+<div class="card-footer text-start">
+    <p>Total de clientes: @ListaClientes.Count</p>
+</div>
 
 @code {
     public Clientes clientes { get; set; } = new Clientes();
