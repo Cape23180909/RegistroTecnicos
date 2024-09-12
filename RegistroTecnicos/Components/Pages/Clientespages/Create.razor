@@ -87,7 +87,13 @@
         var guardado = await clienteService.Guardar(clientes);
         if (guardado)
         {
+            toastService.Notify(new(ToastType.Success,
+         iconName: IconName.None,
+         title: "Validacion",
+         helpText: "",
+         message: "El cliente se a guardado correctamente."));
             Nuevo();
+            Retroceder();
         }
     }
     public async Task Retroceder()
