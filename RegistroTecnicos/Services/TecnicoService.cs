@@ -70,4 +70,10 @@ public class TecnicoService
             .Where(criterio)
             .ToListAsync();
     }
+    public async Task<List<Tecnicos>> ListarTecnicos()
+    {
+        return await _contexto.Tecnicos
+            .AsNoTracking()
+            .ToListAsync();
+    }
 }
