@@ -27,9 +27,9 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int?>("WhatsApp")
+                    b.Property<string>("WhatsApp")
                         .IsRequired()
-                        .HasColumnType("INTEGER");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("ClienteId");
 
@@ -73,6 +73,35 @@ namespace RegistroTecnicos.Migrations
                     b.HasKey("TipoTecnicoId");
 
                     b.ToTable("TiposTecnicos");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.Trabajos", b =>
+                {
+                    b.Property<int>("TrabajoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int?>("ClienteId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime?>("Fecha")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<decimal?>("Monto")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int?>("TecnicoId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("TrabajoId");
+
+                    b.ToTable("Trabajos");
                 });
 
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
