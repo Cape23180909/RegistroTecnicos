@@ -71,11 +71,23 @@
     {
         if (!await Validar())
         {
+            toastService.Notify(new(ToastType.Success,
+           iconName: IconName.None,
+           title: "Validacion",
+           helpText: "",
+           message: "Ya Existe un cliente con ese nombre o numero de telefono en la consulta."));
             return;
         }
         var guardado = await clienteService.Guardar(clientes);
         if (guardado)
         {
+            toastService.Notify(new(ToastType.Success,
+      iconName: IconName.None,
+      title: "Validacion",
+      helpText: "",
+      message: "El cliente se a modificado correctamente."));
+            Nuevo();
+            Retroceder();
             Nuevo();
         }
     }
