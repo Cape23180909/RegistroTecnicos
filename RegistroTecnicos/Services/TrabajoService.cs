@@ -12,6 +12,7 @@ public class TrabajoService
     {
         _contexto = contexto;
     }
+
     //Metodo Existe
     public async Task<bool> Existe(int trabajoId)
     {
@@ -59,6 +60,8 @@ public class TrabajoService
         return await _contexto.Trabajos
             .AsNoTracking()
             .Where(criterio)
+            .Include(t => t.Clientes)
+            .Include(t => t.Tecnicos)
             .ToListAsync();
     }
   
