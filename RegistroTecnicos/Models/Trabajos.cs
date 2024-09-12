@@ -6,7 +6,7 @@ public class Trabajos
     [Key]
     public int TrabajoId { get; set; }
     [Required(ErrorMessage = "Llenar este campo por favor.")]
-    public DateTime? Fecha { get; set; }
+    public DateTime Fecha { get; set; }
     [Required(ErrorMessage = "Llenar este campo por favor.")]
     [ForeignKey("Clientes")]
     public int? ClienteId { get; set; }
