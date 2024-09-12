@@ -1,0 +1,103 @@
+﻿@page "/Trabajo/Delete/{TrabajoId:int}"
+@inject TrabajoService trabajoService
+@inject TecnicoService tecnicoService
+@inject TipoTecnicoService tipoTecnicoService
+@inject NavigationManager navigationManager
+@inject ToastService toastService
+@rendermode InteractiveServer
+
+<PageTitle>Eliminar Trabajo</PageTitle>
+
+<div class="container">
+    <div class="card shadow-header">
+        <div class="card-header bg-primary text-white text-center py-2 rounded">
+            <h3><strong>Eliminar Trabajo</strong></h3>
+        </div>
+
+        <div class="card-header text-center">
+            <h3 class="text-danger">¿Estás seguro de que quieres eliminar este trabajo?</h3>
+        </div>
+
+        <div class="container ">
+            <div class="row justify-content-center ">
+                <div class="col-md-6">
+                    <div class="card shadow-lg ">
+                        <div class="card-header ">
+                            <h3 class="text-center "><strong>Datos del trabajo</strong></h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="border-primary border-2 borde">
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-md-8">
+                                            <ul class="list-unstyled ">
+                                                <li><strong>TrabajoId:</strong> @trabajo.TrabajoId</li>
+                                                <li><strong>Fecha:</strong> @trabajo.Fecha</li>
+                                                <li><strong>ClienteId:</strong> @trabajo.ClienteId</li>
+                                                <li><strong>TecnicoId:</strong> @trabajo.TecnicoId</li>
+                                                <li><strong>Descripci&oacute;n:</strong> @trabajo.Descripcion</li>
+                                                <li><strong>Monto:</strong> @trabajo.Monto</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-footer text-center">
+            <button type="button" class="btn btn-outline-danger" @onclick="EliminarTecnico"><i class="bi bi-trash-fill"></i> Eliminar</button>
+            <button type="button" class="btn btn-outline-primary" @onclick="Retroceder"><i class="bi bi-box-arrow-left"></i> Retroceder</button>
+        </div>
+    </div>
+</div>
+
+@if (trabajo == null)
+{
+    <p>Técnico no encontrado.</p>
+}
+
+@code {
+    [Parameter]
+    public int TrabajoId { get; set; }
+    public Trabajos? trabajo { get; set; } = new Trabajos();
+    public string tipoDescripcion { get; set; }
+    private bool existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (TrabajoId != 0)
+        {
+            trabajo = await trabajoService.Buscar(TrabajoId);
+            if (trabajo != null)
+            {
+                var tipo = await tipoTecnicoService.Buscar(TrabajoId);
+            }
+        }
+    }
+
+    public async Task EliminarTecnico()
+    {
+        if (TrabajoId == 0 || trabajo == null)
+        {
+            return;
+        }
+        if (await trabajoService.Eliminar(TrabajoId))
+        {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Validacion",
+            helpText: "",
+            message: "El Trabajo se a eliminado correctamente."));
+            Retroceder();
+        }
+    }
+
+    public async Task Retroceder()
+    {
+        navigationManager.NavigateTo("/Trabajo/Index");
+    }
+}
