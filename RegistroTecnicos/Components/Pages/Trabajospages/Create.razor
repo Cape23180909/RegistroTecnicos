@@ -124,13 +124,19 @@
            iconName: IconName.None,
            title: "Validacion",
            helpText: "",
-           message: "Ya Existe un cliente con ese nombre o numero de telefono en la consulta."));
+           message: "Ya Existe un cliente con ese nombre  en la consulta."));
             return;
         }
         var guardado = await trabajoService.Guardar(trabajos);
         if (guardado)
         {
+            toastService.Notify(new(ToastType.Success,
+          iconName: IconName.None,
+          title: "Validacion",
+          helpText: "",
+          message: "El trabajo se a guardado correctamente."));
             Nuevo();
+            Retroceder();
         }
     }
     public async Task Retroceder()
