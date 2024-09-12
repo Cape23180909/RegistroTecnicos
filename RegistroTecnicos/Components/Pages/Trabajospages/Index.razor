@@ -1,7 +1,69 @@
 ﻿@page "/Trabajo/Index"
+@inject TrabajoService trabajoService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
 
-<h3>Index de trabajos</h3>
+<PageTitle>Consulta de clientes</PageTitle>
+
+<div class="card-header bg-primary text-center text-white py-2 rounded">
+    <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de Trabajos</h3>
+</div>
+
+<div class="col md-3 text-end">
+    <a href="/Trabajo/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+</div>
+
+<table class="table table-bordered text-center">
+    <thead class="border-primary text-white">
+        <tr>
+            <th>TrabajoId</th>
+            <th>Fecha</th>
+            <th>ClienteId</th>
+            <th>TecnicoId</th>
+            <th>Descripci&oacute;n</th>
+            <th>Monto</th>
+            <th>Ver</th>
+            <th>Editar</th>
+            <th>Eliminar</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var trabajos in ListaTrabajos)
+        {
+            <tr>
+                <td>@trabajos.TrabajoId</td>
+                <td>@trabajos.Fecha</td>
+                <td>@trabajos.ClienteId</td>
+                <td>@trabajos.TecnicoId</td>
+                <td>@trabajos.Descripcion</td>
+                <td>@trabajos.Monto</td>
+
+                <td>
+                    <a href="" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
+                </td>
+
+                <td>
+                    <a href="" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
+                </td>
+
+                <td>
+                    <a href="" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>
+<div class="card-footer text-start">
+    <p>Total de Trabajos: @ListaTrabajos.Count</p>
+</div>
 
 @code {
+    public Trabajos trabajos { get; set; } = new Trabajos();
+    public List<Trabajos> ListaTrabajos { get; set; } = new List<Trabajos>();
 
+    protected override async Task OnInitializedAsync()
+    {
+        ListaTrabajos = await trabajoService.Listar(c => true);
+    }
 }
