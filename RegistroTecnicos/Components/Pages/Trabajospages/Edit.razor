@@ -1,0 +1,141 @@
+﻿@page "/Trabajo/Edit/{TrabajoId:int}"
+@inject TrabajoService trabajoService
+@inject ClienteService clienteService
+@inject TecnicoService tecnicoService
+@inject NavigationManager navigationManager
+@inject ToastService toastService
+@rendermode InteractiveServer
+
+<EditForm Model="trabajos" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card-header bg-primary text-center text-white py-2 rounded">
+        <h3 style="font-weight: bold;" class="font-weight-bold">Modificar Trabajo</h3>
+    </div>
+
+    <div class="card-body">
+
+        @*TrabajoId*@
+        <div class="mb-3">
+            <label for="TrabajoId" class="form-label">TrabajoId:</label>
+            <InputNumber @bind-Value="trabajos.TrabajoId" class="form-control" />
+        </div>
+
+        @*Fecha*@
+        <div class="mb-3">
+            <label for="Nombres" class="form-label">Fecha:</label>
+            <InputDate @bind-Value="trabajos.Fecha" class="form-control" />
+            <ValidationMessage For="@(() => trabajos.Fecha )" />
+        </div>
+
+        @*ClienteId*@
+        <div class="mb-3">
+            <label> ClienteId: </label>
+            <InputSelect @bind-Value="trabajos.ClienteId" class="form-control">
+                <option value="0">Elija un clienteId</option>
+                @foreach (var cliente in clientes)
+                {
+                    <option value="@cliente.ClienteId">@cliente.ClienteId</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => trabajos.ClienteId)" />
+        </div>
+
+        @*TecnicoId*@
+        <div class="mb-3">
+            <label>  T&eacute;cnicoId: </label>
+            <InputSelect @bind-Value="trabajos.TecnicoId" class="form-control">
+                <option value="0">Elija un tipo de t&eacute;cnicoId</option>
+                @foreach (var tecnico in tecnicos)
+                {
+                    <option value="@tecnico.TecnicoId">@tecnico.TecnicoId</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => trabajos.TecnicoId)" />
+        </div>
+
+        @*Descripcion*@
+        <div class="mb-3">
+            <label for="Descripcion" class="form-label">Descripci&oacute;n:</label>
+            <InputText @bind-Value="trabajos.Descripcion" class="form-control" />
+            <ValidationMessage For="@(() => trabajos.Descripcion)" />
+        </div>
+
+        @*Monto*@
+        <div class="mb-3">
+            <label for="Monto" class="form-label">Monto:</label>
+            <InputNumber @bind-Value="trabajos.Monto" class="form-control" />
+            <ValidationMessage For="@(() => trabajos.Monto)" />
+        </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-lg-center text-center">
+        <div class="btn-group">
+            <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span>Nuevo</button>
+            <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span>Guardar</button>
+            <button type="button" class="btn btn-outline-danger" @onclick="Retroceder"><span class="bi bi-arrow-bar-left"></span>Retroceder</button>
+        </div>
+    </div>
+
+</EditForm>
+
+@code {
+    [Parameter]
+    public int TrabajoId { get; set; }
+    public Trabajos trabajos { get; set; } = new Trabajos();
+    public List<Clientes> clientes = new List <Clientes>();
+    public List<Tecnicos> tecnicos = new List<Tecnicos>();
+    private bool Existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        clientes = await clienteService.ListarClientes();
+        tecnicos = await tecnicoService.ListarTecnicos();
+
+
+        if (TrabajoId > 0)
+        {
+            trabajos = await trabajoService.Buscar(TrabajoId);
+        }
+    }
+
+    public async Task Nuevo()
+    {
+        trabajos = new Trabajos();
+        Existe = false;
+    }
+
+    public async Task<bool> Validar()
+    {
+        var listaTrabajo = await trabajoService.Listar(t => t.Descripcion.ToLower() == trabajos.Descripcion.ToLower() && t.TrabajoId != trabajos.TrabajoId);
+        Existe = listaTrabajo.Any();
+        return Existe;
+    }
+    public async Task Guardar()
+    {
+        if (await Validar())
+        {
+            toastService.Notify(new(ToastType.Success,
+           iconName: IconName.None,
+           title: "Validacion",
+           helpText: "",
+           message: "Ya Existe un cliente con ese nombre en la consulta."));
+            return;
+        }
+        var guardado = await trabajoService.Guardar(trabajos);
+        if (guardado)
+        {
+            toastService.Notify(new(ToastType.Success,
+         iconName: IconName.None,
+         title: "Validacion",
+         helpText: "",
+         message: "El trabajo se a modificado correctamente."));
+            Nuevo();
+            Retroceder();
+        }
+    }
+    public async Task Retroceder()
+    {
+        navigationManager.NavigateTo("/Trabajo/Index");
+    }
+}
