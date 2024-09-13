@@ -1,7 +1,7 @@
 ﻿@page "/Trabajo/Delete/{TrabajoId:int}"
 @inject TrabajoService trabajoService
 @inject TecnicoService tecnicoService
-@inject TipoTecnicoService tipoTecnicoService
+@inject ClienteService clienteService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 @rendermode InteractiveServer
@@ -33,8 +33,8 @@
                                             <ul class="list-unstyled ">
                                                 <li><strong>TrabajoId:</strong> @trabajo.TrabajoId</li>
                                                 <li><strong>Fecha:</strong> @trabajo.Fecha</li>
-                                                <li><strong>ClienteId:</strong> @trabajo.ClienteId</li>
-                                                <li><strong>TecnicoId:</strong> @trabajo.TecnicoId</li>
+                                                <li><strong>ClienteId:</strong> @cliente.Nombres</li>
+                                                <li><strong>TecnicoId:</strong> @tecnico.Nombres</li>
                                                 <li><strong>Descripci&oacute;n:</strong> @trabajo.Descripcion</li>
                                                 <li><strong>Monto:</strong> @trabajo.Monto</li>
                                             </ul>
@@ -65,6 +65,9 @@
     public int TrabajoId { get; set; }
     public Trabajos? trabajo { get; set; } = new Trabajos();
     public string tipoDescripcion { get; set; }
+    public Clientes? cliente { get; set; } = new Clientes();
+    public Tecnicos? tecnico { get; set; } = new Tecnicos();
+
     private bool existe = false;
 
     protected override async Task OnInitializedAsync()
@@ -72,9 +75,14 @@
         if (TrabajoId != 0)
         {
             trabajo = await trabajoService.Buscar(TrabajoId);
-            if (trabajo != null)
+
+            if (trabajo?.ClienteId.HasValue == true)
             {
-                var tipo = await tipoTecnicoService.Buscar(TrabajoId);
+                cliente = await clienteService.Buscar(trabajo.ClienteId.Value);
+            }
+            if (trabajo?.TecnicoId.HasValue == true)
+            {
+                tecnico = await tecnicoService.Buscar(trabajo.TecnicoId.Value);
             }
         }
     }
