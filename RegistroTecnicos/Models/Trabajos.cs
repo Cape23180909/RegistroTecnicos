@@ -10,7 +10,7 @@ public class Trabajos
     [Required(ErrorMessage = "Llenar este campo por favor.")]
     [ForeignKey("Clientes")]
     public int? ClienteId { get; set; }
-    public  Clientes? Clientes { get; set; }
+    public Clientes? Clientes { get; set; }
     [Required(ErrorMessage = "Llenar este campo por favor.")]
     [ForeignKey("Tecnicos")]
     public int? TecnicoId { get; set; }
@@ -19,5 +19,4 @@ public class Trabajos
     public string? Descripcion { get; set; }
     [Required(ErrorMessage = "Llenar este campo por favor.")]
     public decimal? Monto { get; set; }
-
 }
