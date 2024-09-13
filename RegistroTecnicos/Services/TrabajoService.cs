@@ -64,5 +64,13 @@ public class TrabajoService
             .Include(t => t.Tecnicos)
             .ToListAsync();
     }
+    //Metodo Finalizar Trabajo enviando dicho mensaje
+    public async Task <bool> FinalizarTrabajo (int trabajoId)
+    {
+        var cantidad = await _contexto.Trabajos
+            .Where(t => t.TrabajoId == trabajoId)
+            .ExecuteUpdateAsync(t =>t.SetProperty(x =>x.Fecha, DateTime.Now));
+        return cantidad > 0;
+    }
   
 }
