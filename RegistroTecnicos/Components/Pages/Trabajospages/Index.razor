@@ -33,8 +33,8 @@
             <tr>
                 <td>@trabajos.TrabajoId</td>
                 <td>@trabajos.Fecha.ToString("dd-MM-yyyy")</td>
-                <td>@trabajos.ClienteId</td>
-                <td>@trabajos.TecnicoId</td>
+                <td>@trabajos.Clientes?.Nombres</td>
+                <td>@trabajos.Tecnicos?.Nombres</td>
                 <td>@trabajos.Descripcion</td>
                 <td>@trabajos.Monto</td>
 
