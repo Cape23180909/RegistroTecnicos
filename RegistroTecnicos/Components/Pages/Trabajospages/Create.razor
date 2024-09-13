@@ -35,10 +35,10 @@
                 <option value="0">Elija un clienteId</option>
                 @foreach (var cliente in clientes)
                 {
-                    <option value="@cliente.ClienteId">@cliente.ClienteId</option>
+                    <option value="@cliente.ClienteId">@cliente.Nombres</option>
                 }
             </InputSelect>
-            <ValidationMessage For="@(() => trabajos.ClienteId)" />
+            <ValidationMessage For="@(() => trabajos.Descripcion)" />
         </div>
 
         @*TecnicoId*@
@@ -48,10 +48,10 @@
                 <option value="0">Elija un  t&eacute;cnicoId</option>
                 @foreach (var tecnico in tecnicos)
                 {
-                    <option value="@tecnico.TecnicoId">@tecnico.TecnicoId</option>
+                    <option value="@tecnico.TecnicoId">@tecnico.Nombres</option>
                 }
             </InputSelect>
-            <ValidationMessage For="@(() => trabajos.TecnicoId)" />
+            <ValidationMessage For="@(() => trabajos.Descripcion)" />
         </div>
 
         @*Descripcion*@
