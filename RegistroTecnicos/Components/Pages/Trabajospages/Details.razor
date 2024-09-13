@@ -1,7 +1,7 @@
-﻿@page "/Trabajo/Details/{TrabajosId:int}"
+﻿@page "/Trabajo/Details/{TrabajoId:int}"
 @inject TrabajoService trabajoService
 @inject TecnicoService tecnicoService
-@inject TipoTecnicoService tipoTecnicoService
+@inject ClienteService clienteService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -21,8 +21,8 @@
                             <ul class="list-unstyled">
                                 <li><strong>TrabajoId:</strong> @trabajo.TrabajoId</li>
                                 <li><strong>Fecha:</strong> @trabajo.Fecha</li>
-                                <li><strong>ClienteId:</strong> @trabajo.ClienteId</li>
-                                <li><strong>TecnicoId:</strong> @trabajo.TecnicoId</li>
+                                <li><strong>ClienteId:</strong> @cliente.Nombres</li>
+                                <li><strong>TecnicoId:</strong> @tecnico.Nombres</li>
                                 <li><strong>Descripci&oacute;n:</strong> @trabajo.Descripcion</li>
                                 <li><strong>Monto:</strong> @trabajo.Monto</li>
                             </ul>
@@ -31,9 +31,14 @@
                 </div>
             </div>
         </div>
-        <div class="card-footer">
+        <div class="card-footer d-inline-block">
             <a href="/Trabajo/Index" class="btn btn-outline-primary">
                 <span class="bi bi-box-arrow-left"></span> Retroceder
+            </a>
+        </div>
+        <div class="card-footer d-inline-block">
+            <a @onclick="Finalizar" class="btn btn-outline-success">
+                <span class="bi bi-send-check"></span> Enviar Mensaje
             </a>
         </div>
     </div>
@@ -41,12 +46,31 @@
 
 @code {
     [Parameter]
-    public int TrabajosId { get; set; }
-    public Trabajos trabajo { get; set; }
+    public int TrabajoId { get; set; }
+    public Trabajos? trabajo { get; set; } = new Trabajos();
+    public Clientes? cliente { get; set; } = new Clientes();
+    public Tecnicos? tecnico { get; set; } = new Tecnicos();
 
     protected override async Task OnInitializedAsync()
     {
-        trabajo = await trabajoService.Buscar(TrabajosId);
-     
+        if (TrabajoId != 0)
+        {
+            trabajo = await trabajoService.Buscar(TrabajoId);
+
+            if (trabajo?.ClienteId.HasValue == true)
+            {
+                cliente = await clienteService.Buscar(trabajo.ClienteId.Value);
+            }
+            if (trabajo?.TecnicoId.HasValue == true)
+            {
+                tecnico = await tecnicoService.Buscar(trabajo.TecnicoId.Value);
+            }
+        }
+    }
+
+    public async Task Finalizar()
+    {
+        var mensaje = $"El trabajo {TrabajoId} ya está finalizado";
+        navigationManager.NavigateTo("");
     }
 }
