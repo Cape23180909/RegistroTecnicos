@@ -52,10 +52,11 @@ public class TrabajoService
     {
         return await _contexto.Trabajos
             .AsNoTracking()
+            .Include(t => t.Clientes)
             .FirstOrDefaultAsync(T => T.TrabajoId == id);
     }
     //Metodo Listar
-    public async Task <List<Trabajos>> Listar (Expression<Func <Trabajos, bool>> criterio)
+    public async Task<List<Trabajos>> Listar(Expression<Func<Trabajos, bool>> criterio)
     {
         return await _contexto.Trabajos
             .AsNoTracking()
@@ -64,13 +65,4 @@ public class TrabajoService
             .Include(t => t.Tecnicos)
             .ToListAsync();
     }
-    //Metodo Finalizar Trabajo enviando dicho mensaje
-    public async Task <bool> FinalizarTrabajo (int trabajoId)
-    {
-        var cantidad = await _contexto.Trabajos
-            .Where(t => t.TrabajoId == trabajoId)
-            .ExecuteUpdateAsync(t =>t.SetProperty(x =>x.Fecha, DateTime.Now));
-        return cantidad > 0;
-    }
-  
 }
