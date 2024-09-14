@@ -20,14 +20,12 @@
             <label for="TrabajoId" class="form-label">TrabajoId:</label>
             <InputNumber @bind-Value="trabajos.TrabajoId" class="form-control" />
         </div>
-
         @*Fecha*@
         <div class="mb-3">
-            <label for="Nombres" class="form-label">Fecha:</label>
-            <InputDate @bind-Value="trabajos.Fecha" class="form-control" />
-            <ValidationMessage For="@(() => trabajos.Fecha )" />
+            <label for="Fecha" class="form-label">Fecha:</label>
+            <InputDate id="Fecha" class="form-control" @bind-Value="trabajos.Fecha" />
+            <ValidationMessage For="@(() => trabajos.Fecha)" />
         </div>
-
         @*ClienteId*@
         <div class="mb-3">
             <label> ClienteId: </label>
@@ -40,7 +38,6 @@
             </InputSelect>
             <ValidationMessage For="@(() => trabajos.Descripcion)" />
         </div>
-
         @*TecnicoId*@
         <div class="mb-3">
             <label>  T&eacute;cnicoId: </label>
@@ -53,7 +50,6 @@
             </InputSelect>
             <ValidationMessage For="@(() => trabajos.Descripcion)" />
         </div>
-
         @*Descripcion*@
         <div class="mb-3">
             <label for="Descripcion" class="form-label">Descripci&oacute;n:</label>
