@@ -23,7 +23,7 @@
                                 <li><strong>Fecha:</strong> @trabajo.Fecha</li>
                                 <li><strong>ClienteId:</strong> @cliente.Nombres</li>
                                 <li><strong>TecnicoId:</strong> @tecnico.Nombres</li>
-                                <li><strong>Descripci&oacute;n:</strong> @trabajo.Descripcion</li>
+                                <li><strong>Descripción:</strong> @trabajo.Descripcion</li>
                                 <li><strong>Monto:</strong> @trabajo.Monto</li>
                             </ul>
                         </div>
@@ -35,18 +35,20 @@
             <a href="/Trabajo/Index" class="btn btn-outline-primary">
                 <span class="bi bi-box-arrow-left"></span> Retroceder
             </a>
+            <div class="card-footer d-inline-block">
+                <a href=@($"https://wa.me/{trabajo.Clientes?.WhatsApp}?text={ObtenerMensajeFinalizar()}") class="btn btn-outline-success">
+                    <span class="bi bi-whatsapp"></span> Enviar Mensaje
+                </a>
+            </div>
         </div>
-        <div class="card-footer d-inline-block">
-            <a @onclick="Finalizar" class="btn btn-outline-success">
-                <span class="bi bi-send-check"></span> Enviar Mensaje
-            </a>
-        </div>
+     
     </div>
 }
 
 @code {
     [Parameter]
     public int TrabajoId { get; set; }
+
     public Trabajos? trabajo { get; set; } = new Trabajos();
     public Clientes? cliente { get; set; } = new Clientes();
     public Tecnicos? tecnico { get; set; } = new Tecnicos();
@@ -68,9 +70,37 @@
         }
     }
 
-    public async Task Finalizar()
+    // Método para obtener la URL de WhatsApp usando el número del cliente
+    private string ObtenerUrlWhatsApp()
     {
-        var mensaje = $"El trabajo {TrabajoId} ya está finalizado";
-        navigationManager.NavigateTo("");
+        if (cliente?.WhatsApp != null)
+        {
+            string mensaje = ObtenerMensajeFinalizar();
+            string mensajeEscapado = Uri.EscapeDataString(mensaje);
+
+            string url = $"https://wa.me/{cliente.WhatsApp}?text={mensajeEscapado}";
+            return url;
+        }
+        else
+        {
+            return "#";
+        }
+    }
+
+    // Método para generar el mensaje de finalización
+    private string ObtenerMensajeFinalizar()
+    {
+        return $"El trabajo de {cliente?.Nombres} ya está finalizado.";
+    }
+
+    // Método para enviar el mensaje de WhatsApp
+    private async Task EnviarMensajeWhatsApp()
+    {
+        string urlWhatsApp = ObtenerUrlWhatsApp();
+
+        if (urlWhatsApp != "#")
+        {
+            navigationManager.NavigateTo(urlWhatsApp, true); 
+        }
     }
 }
