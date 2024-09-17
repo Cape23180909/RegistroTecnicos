@@ -4,7 +4,6 @@ using RegistroTecnicos.Models;
 using System.Linq.Expressions;
 
 namespace RegistroTecnicos.Services;
-
 public class TrabajoService
 {
     private readonly Contexto _contexto;
