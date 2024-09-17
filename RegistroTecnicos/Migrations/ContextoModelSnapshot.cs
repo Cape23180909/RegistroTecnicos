@@ -36,6 +36,25 @@ namespace RegistroTecnicos.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("RegistroTecnicos.Models.Prioridades", b =>
+                {
+                    b.Property<int>("PrioridadId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Descripcion")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<double?>("Tiempo")
+                        .IsRequired()
+                        .HasColumnType("REAL");
+
+                    b.HasKey("PrioridadId");
+
+                    b.ToTable("Prioridades");
+                });
+
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
                 {
                     b.Property<int>("TecnicoId")
@@ -82,14 +101,14 @@ namespace RegistroTecnicos.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<int?>("ClienteId")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<DateTime?>("Fecha")
-                        .IsRequired()
+                    b.Property<DateTime>("Fecha")
                         .HasColumnType("TEXT");
 
                     b.Property<decimal?>("Monto")
@@ -97,9 +116,15 @@ namespace RegistroTecnicos.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<int?>("TecnicoId")
+                        .IsRequired()
                         .HasColumnType("INTEGER");
 
                     b.HasKey("TrabajoId");
+
+                    b.HasIndex("ClienteId");
+
+                    b.HasIndex("TecnicoId")
+                        .IsUnique();
 
                     b.ToTable("Trabajos");
                 });
@@ -113,6 +138,30 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired();
 
                     b.Navigation("TiposTecnicosId");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.Trabajos", b =>
+                {
+                    b.HasOne("RegistroTecnicos.Models.Clientes", "Clientes")
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RegistroTecnicos.Models.Tecnicos", "Tecnicos")
+                        .WithOne("Trabajos")
+                        .HasForeignKey("RegistroTecnicos.Models.Trabajos", "TecnicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clientes");
+
+                    b.Navigation("Tecnicos");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
+                {
+                    b.Navigation("Trabajos");
                 });
 
             modelBuilder.Entity("RegistroTecnicos.Models.TiposTecnicos", b =>
