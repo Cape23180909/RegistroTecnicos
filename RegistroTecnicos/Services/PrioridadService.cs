@@ -13,6 +13,14 @@ namespace RegistroTecnicos.Services
         {
             _contexto = contexto;
         }
+
+        //Metodo el cual Nos Identifica si esa prioridad si ya esta registrada en la base de datos
+        public async Task<bool> ExistePrioridad(string descripcion, int id)
+        {
+            return await _contexto.Prioridades
+                .AnyAsync(p => p.Descripcion.ToLower().Equals(descripcion.ToLower()) || p.Descripcion.ToLower().Equals(descripcion.ToLower()) && p.PrioridadId != id);
+        }
+
         //Metodo Existe
         public async Task <bool> Existe (int prioridadId)
         {
