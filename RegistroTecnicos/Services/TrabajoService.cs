@@ -62,6 +62,14 @@ public class TrabajoService
             .Where(criterio)
             .Include(t => t.Clientes)
             .Include(t => t.Tecnicos)
+            .Include(t =>t.Prioridades)
+            .ToListAsync();
+    }
+
+    public async Task<List<Prioridades>> ListarPrioridades()
+    {
+        return await _contexto.Prioridades
+            .AsNoTracking()
             .ToListAsync();
     }
 }
