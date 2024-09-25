@@ -11,8 +11,8 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20240917055744_Tecnicos")]
-    partial class Tecnicos
+    [Migration("20240925032304_Inicial")]
+    partial class Inicial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,9 +49,9 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<double?>("Tiempo")
+                    b.Property<string>("Tiempo")
                         .IsRequired()
-                        .HasColumnType("REAL");
+                        .HasColumnType("TEXT");
 
                     b.HasKey("PrioridadId");
 
@@ -118,6 +118,9 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("PrioridadId")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int?>("TecnicoId")
                         .IsRequired()
                         .HasColumnType("INTEGER");
@@ -125,6 +128,8 @@ namespace RegistroTecnicos.Migrations
                     b.HasKey("TrabajoId");
 
                     b.HasIndex("ClienteId");
+
+                    b.HasIndex("PrioridadId");
 
                     b.HasIndex("TecnicoId")
                         .IsUnique();
@@ -151,6 +156,12 @@ namespace RegistroTecnicos.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("RegistroTecnicos.Models.Prioridades", "Prioridad")
+                        .WithMany()
+                        .HasForeignKey("PrioridadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("RegistroTecnicos.Models.Tecnicos", "Tecnicos")
                         .WithOne("Trabajos")
                         .HasForeignKey("RegistroTecnicos.Models.Trabajos", "TecnicoId")
@@ -158,6 +169,8 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired();
 
                     b.Navigation("Clientes");
+
+                    b.Navigation("Prioridad");
 
                     b.Navigation("Tecnicos");
                 });

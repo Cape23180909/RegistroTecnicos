@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace RegistroTecnicos.Migrations
 {
     /// <inheritdoc />
-    public partial class Tecnicos : Migration
+    public partial class Inicial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,7 +32,7 @@ namespace RegistroTecnicos.Migrations
                     PrioridadId = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
-                    Tiempo = table.Column<double>(type: "REAL", nullable: false)
+                    Tiempo = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -83,7 +83,8 @@ namespace RegistroTecnicos.Migrations
                     ClienteId = table.Column<int>(type: "INTEGER", nullable: false),
                     TecnicoId = table.Column<int>(type: "INTEGER", nullable: false),
                     Descripcion = table.Column<string>(type: "TEXT", nullable: false),
-                    Monto = table.Column<decimal>(type: "TEXT", nullable: false)
+                    Monto = table.Column<decimal>(type: "TEXT", nullable: false),
+                    PrioridadId = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,6 +94,12 @@ namespace RegistroTecnicos.Migrations
                         column: x => x.ClienteId,
                         principalTable: "Clientes",
                         principalColumn: "ClienteId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Trabajos_Prioridades_PrioridadId",
+                        column: x => x.PrioridadId,
+                        principalTable: "Prioridades",
+                        principalColumn: "PrioridadId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Trabajos_Tecnicos_TecnicoId",
@@ -113,6 +120,11 @@ namespace RegistroTecnicos.Migrations
                 column: "ClienteId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Trabajos_PrioridadId",
+                table: "Trabajos",
+                column: "PrioridadId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Trabajos_TecnicoId",
                 table: "Trabajos",
                 column: "TecnicoId",
@@ -123,13 +135,13 @@ namespace RegistroTecnicos.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Prioridades");
-
-            migrationBuilder.DropTable(
                 name: "Trabajos");
 
             migrationBuilder.DropTable(
                 name: "Clientes");
+
+            migrationBuilder.DropTable(
+                name: "Prioridades");
 
             migrationBuilder.DropTable(
                 name: "Tecnicos");
