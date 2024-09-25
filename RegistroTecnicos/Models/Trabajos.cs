@@ -19,4 +19,8 @@ public class Trabajos
     public string? Descripcion { get; set; }
     [Required(ErrorMessage = "Llenar este campo por favor.")]
     public decimal? Monto { get; set; }
+
+    [ForeignKey("Prioridades")]
+    public int? PrioridadId { get; set; }
+    public Prioridades? Prioridades { get; set; }
 }
