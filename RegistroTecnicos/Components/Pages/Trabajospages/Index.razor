@@ -20,6 +20,7 @@
             <th>Fecha</th>
             <th>ClienteId</th>
             <th>TecnicoId</th>
+            <th>Prioridad</th>
             <th>Descripci&oacute;n</th>
             <th>Monto</th>
             <th>Ver</th>
@@ -35,6 +36,7 @@
                 <td>@trabajos.Fecha.ToString("dd-MM-yyyy")</td>
                 <td>@trabajos.Clientes?.Nombres</td>
                 <td>@trabajos.Tecnicos?.Nombres</td>
+                <td>@trabajos.Prioridades?.Descripcion</td>
                 <td>@trabajos.Descripcion</td>
                 <td>@trabajos.Monto</td>
 
