@@ -2,6 +2,7 @@
 @inject TrabajoService trabajoService
 @inject TecnicoService tecnicoService
 @inject ClienteService clienteService
+@inject PrioridadService prioridadService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 @rendermode InteractiveServer
@@ -35,6 +36,7 @@
                                                 <li><strong>Fecha:</strong> @trabajo.Fecha</li>
                                                 <li><strong>ClienteId:</strong> @cliente.Nombres</li>
                                                 <li><strong>TecnicoId:</strong> @tecnico.Nombres</li>
+                                                <li><strong>Prioridad:</strong> @prioridad.Descripcion</li>
                                                 <li><strong>Descripci&oacute;n:</strong> @trabajo.Descripcion</li>
                                                 <li><strong>Monto:</strong> @trabajo.Monto</li>
                                             </ul>
@@ -67,6 +69,7 @@
     public string tipoDescripcion { get; set; }
     public Clientes? cliente { get; set; } = new Clientes();
     public Tecnicos? tecnico { get; set; } = new Tecnicos();
+    public Prioridades? prioridad { get; set; } = new Prioridades();
 
     private bool existe = false;
 
@@ -83,6 +86,10 @@
             if (trabajo?.TecnicoId.HasValue == true)
             {
                 tecnico = await tecnicoService.Buscar(trabajo.TecnicoId.Value);
+            }
+            if (trabajo?.PrioridadId.HasValue == true)
+            {
+                prioridad = await prioridadService.Buscar(trabajo.PrioridadId.Value);
             }
         }
     }
