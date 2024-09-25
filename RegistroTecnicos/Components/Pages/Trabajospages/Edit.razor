@@ -15,6 +15,7 @@
 
     <div class="card-body">
 
+
         @*TrabajoId*@
         <div class="mb-3">
             <label for="TrabajoId" class="form-label">TrabajoId:</label>
@@ -22,9 +23,9 @@
         </div>
         @*Fecha*@
         <div class="mb-3">
-            <label for="Nombres" class="form-label">Fecha:</label>
-            <InputDate @bind-Value="trabajos.Fecha" class="form-control" />
-            <ValidationMessage For="@(() => trabajos.Fecha )" />
+            <label for="Fecha" class="form-label">Fecha:</label>
+            <InputDate id="Fecha" class="form-control" @bind-Value="trabajos.Fecha" />
+            <ValidationMessage For="@(() => trabajos.Descripcion)" />
         </div>
         @*ClienteId*@
         <div class="mb-3">
@@ -50,12 +51,25 @@
             </InputSelect>
             <ValidationMessage For="@(() => trabajos.Descripcion)" />
         </div>
+        @*Prioridad*@
+        <div class="mb-3">
+            <label>Prioridad: </label>
+            <InputSelect @bind-Value="trabajos.PrioridadId" class="form-control">
+                <option value="0">Elija una prioridad</option>
+                @foreach (var prioridad in prioridades)
+                {
+                    <option value="@prioridad.PrioridadId">@prioridad.Descripcion</option>
+                }
+            </InputSelect>
+            <ValidationMessage For="@(() => trabajos.Descripcion)" />
+        </div>
         @*Descripcion*@
         <div class="mb-3">
             <label for="Descripcion" class="form-label">Descripci&oacute;n:</label>
             <InputText @bind-Value="trabajos.Descripcion" class="form-control" />
             <ValidationMessage For="@(() => trabajos.Descripcion)" />
         </div>
+
         @*Monto*@
         <div class="mb-3">
             <label for="Monto" class="form-label">Monto:</label>
@@ -80,13 +94,14 @@
     public Trabajos trabajos { get; set; } = new Trabajos();
     public List<Clientes> clientes = new List <Clientes>();
     public List<Tecnicos> tecnicos = new List<Tecnicos>();
+    public List<Prioridades> prioridades = new List<Prioridades>();
     private bool Existe = false;
 
     protected override async Task OnInitializedAsync()
     {
         clientes = await clienteService.ListarClientes();
         tecnicos = await tecnicoService.ListarTecnicos();
-
+        prioridades = await trabajoService.ListarPrioridades();
 
         if (TrabajoId > 0)
         {
