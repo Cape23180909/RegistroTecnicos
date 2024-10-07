@@ -1,5 +1,8 @@
 ﻿@page "/Trabajo/Index"
 @inject TrabajoService trabajoService
+@inject ClienteService clienteService
+@inject TecnicoService tecnicoService
+@inject PrioridadService prioridadService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -9,8 +12,31 @@
     <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de Trabajos</h3>
 </div>
 
-<div class="col md-3 text-end">
-    <a href="/Trabajo/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+<div class="row mb-3 align-items-end">
+    <div class="col md-3">
+        <label for="Filtro" class="form-label">Filtrar por:</label>
+        <select @bind="filtro" class="form-select">
+            <option value="ID">TrabajoId</option>
+            <option value="Cliente">Cliente</option>
+            <option value="Tecnico">T&eacute;cnico</option>
+            <option value="Prioridad">Prioridad</option>
+            <option value="Descripcion">Descripci&oacute;n</option>
+        </select>
+    </div>
+
+    <div class="col md-6">
+        <label for="ValorFiltro" class="form-label">Busqueda:</label>
+        <div class="input-group">
+            <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+            <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
+                <span class="bi bi-search"></span>Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="col md-3 text-end">
+        <a href="/Trabajo/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+    </div>
 </div>
 
 <table class="table table-bordered text-center">
@@ -63,9 +89,48 @@
 @code {
     public Trabajos trabajos { get; set; } = new Trabajos();
     public List<Trabajos> ListaTrabajos { get; set; } = new List<Trabajos>();
+    public string filtro = "ID";
+    public string valorFiltro = "";
 
     protected override async Task OnInitializedAsync()
     {
         ListaTrabajos = await trabajoService.Listar(c => true);
     }
+
+    public async Task Buscar()
+    {
+        if (string.IsNullOrWhiteSpace(valorFiltro))
+        {
+
+            ListaTrabajos = await trabajoService.Listar(t => true);
+        }
+        else
+        {
+            if (filtro == "ID" && int.TryParse(valorFiltro, out int trabajoId))
+            {
+                ListaTrabajos = await trabajoService.Listar(t => t.TrabajoId == trabajoId);
+            }
+
+            else if (filtro == "Cliente")
+            {
+                ListaTrabajos = await trabajoService.Listar(t => t.Clientes.Nombres.Contains(valorFiltro));
+            }
+
+            else if (filtro == "Tecnico")
+            {
+                ListaTrabajos = await trabajoService.Listar(t => t.Tecnicos.Nombres.Contains(valorFiltro));
+            }
+
+            else if (filtro == "Prioridad")
+            {
+                ListaTrabajos = await trabajoService.Listar(t => t.Prioridades.Descripcion.Contains(valorFiltro));
+            }
+
+            else if (filtro == "Descripcion")
+            {
+                ListaTrabajos = await trabajoService.Listar(t => t.Descripcion.Contains(valorFiltro));
+            }
+        }
+    }
+
 }

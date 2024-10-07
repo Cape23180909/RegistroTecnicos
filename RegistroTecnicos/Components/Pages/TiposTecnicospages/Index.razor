@@ -9,8 +9,28 @@
     <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de Tipos T&eacute;cnicos</h3>
 </div>
 
-<div class="col md-3 text-end">
-    <a href="/TipoTecnico/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/>Crear</a>
+<div class="row mb-3 align-items-end">
+    <div class="col md-3">
+        <label for="Filtro" class="form-label">Filtrar por:</label>
+        <select @bind="filtro" class="form-select">
+            <option value="ID">TipoTecnicoId</option>
+            <option value="Descripcion">Descripci&oacute;n</option>
+        </select>
+    </div>
+
+    <div class="col md-6">
+        <label for="ValorFiltro" class="form-label">Busqueda:</label>
+        <div class="input-group">
+            <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+            <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
+                <span class="bi bi-search"></span>Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="col md-3 text-end">
+        <a href="/TipoTecnico/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/>Crear</a>
+    </div>
 </div>
 
 <table class="table table-bordered  text-center">
@@ -51,9 +71,30 @@
 
 @code {
     public List<TiposTecnicos> ListaTipoTecnico { get; set; } = new List<TiposTecnicos>();
+    public string filtro = "ID";
+    public string valorFiltro = "";
 
     protected override async Task OnInitializedAsync()
     {
         ListaTipoTecnico = await tipoTecnicoService.Listar(t => true);
+    }
+
+    public async Task Buscar()
+    {
+        if (string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            ListaTipoTecnico = await tipoTecnicoService.Listar(P => true);
+        }
+        else
+        {
+            if (filtro == "ID" && int.TryParse(valorFiltro, out int tipotecnicoId))
+            {
+                ListaTipoTecnico = await tipoTecnicoService.Listar(t => t.TipoTecnicoId == tipotecnicoId);
+            }
+            else if (filtro == "Descripcion")
+            {
+                ListaTipoTecnico = await tipoTecnicoService.Listar(a => a.Descripcion.Contains(valorFiltro));
+            }
+        }
     }
 }
