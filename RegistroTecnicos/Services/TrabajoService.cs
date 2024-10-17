@@ -72,4 +72,32 @@ public class TrabajoService
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task<List<Articulos>> ListarArticulos()
+    {
+        return await _contexto.Articulos
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+    public async Task<List<TrabajosDetalle>> ListarDetalles(int trabajoId)
+    {
+            // Busca los detalles del trabajo específico
+            var detalles = await _contexto.TrabajosDetalles
+                .Where(td => td.TrabajoId == trabajoId)
+                .ToListAsync();
+
+            return detalles;
+        
+    }
+
+    public async Task<List<TrabajosDetalle>> ObtenerDetalles(int trabajoId)
+    {
+        return await _contexto.TrabajosDetalles
+            .AsNoTracking()
+            .ToListAsync();
+    }
+
+
+
 }
