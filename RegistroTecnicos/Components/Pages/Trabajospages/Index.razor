@@ -8,82 +8,86 @@
 
 <PageTitle>Consulta de clientes</PageTitle>
 
-<div class="card-header bg-primary text-center text-white py-2 rounded">
-    <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de Trabajos</h3>
-</div>
+<div class="container">
+    <div class="card shadow-lg ">
+        <div class="card-header bg-primary text-white  space-between">
+            <h5 class="card-title">Consulta de trabajos</h5>
+        </div>
 
-<div class="row mb-3 align-items-end">
-    <div class="col md-3">
-        <label for="Filtro" class="form-label">Filtrar por:</label>
-        <select @bind="filtro" class="form-select">
-            <option value="ID">TrabajoId</option>
-            <option value="Cliente">Cliente</option>
-            <option value="Tecnico">T&eacute;cnico</option>
-            <option value="Prioridad">Prioridad</option>
-            <option value="Descripcion">Descripci&oacute;n</option>
-        </select>
-    </div>
+        <div class="row mb-3 align-items-end">
+            <div class="col md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="ID">TrabajoId</option>
+                    <option value="Cliente">Cliente</option>
+                    <option value="Tecnico">T&eacute;cnico</option>
+                    <option value="Prioridad">Prioridad</option>
+                    <option value="Descripcion">Descripci&oacute;n</option>
+                </select>
+            </div>
 
-    <div class="col md-6">
-        <label for="ValorFiltro" class="form-label">Busqueda:</label>
-        <div class="input-group">
-            <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
-            <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
-                <span class="bi bi-search"></span>Buscar
-            </button>
+            <div class="col md-6">
+                <label for="ValorFiltro" class="form-label">Busqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span>Buscar
+                    </button>
+                </div>
+            </div>
+
+            <div class="col md-3 text-end">
+                <a href="/Trabajo/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+            </div>
+        </div>
+
+        <table class="table table-bordered text-center">
+            <thead class="border-primary text-white">
+                <tr>
+                    <th>TrabajoId</th>
+                    <th>Fecha</th>
+                    <th>ClienteId</th>
+                    <th>TecnicoId</th>
+                    <th>Prioridad</th>
+                    <th>Descripci&oacute;n</th>
+                    <th>Monto</th>
+                    <th>Ver</th>
+                    <th>Editar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var trabajos in ListaTrabajos)
+                {
+                    <tr>
+                        <td>@trabajos.TrabajoId</td>
+                        <td>@trabajos.Fecha.ToString("dd-MM-yyyy")</td>
+                        <td>@trabajos.Clientes?.Nombres</td>
+                        <td>@trabajos.Tecnicos?.Nombres</td>
+                        <td>@trabajos.Prioridades?.Descripcion</td>
+                        <td>@trabajos.Descripcion</td>
+                        <td>@trabajos.Monto</td>
+
+                        <td>
+                            <a href="/Trabajo/Details/@trabajos.TrabajoId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
+                        </td>
+
+                        <td>
+                            <a href="/Trabajo/Edit/@trabajos.TrabajoId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
+                        </td>
+
+                        <td>
+                            <a href="/Trabajo/Delete/@trabajos.TrabajoId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+        <div class="card-footer text-start">
+            <p>Total de Trabajos: @ListaTrabajos.Count</p>
         </div>
     </div>
-
-    <div class="col md-3 text-end">
-        <a href="/Trabajo/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
-    </div>
-</div>
-
-<table class="table table-bordered text-center">
-    <thead class="border-primary text-white">
-        <tr>
-            <th>TrabajoId</th>
-            <th>Fecha</th>
-            <th>ClienteId</th>
-            <th>TecnicoId</th>
-            <th>Prioridad</th>
-            <th>Descripci&oacute;n</th>
-            <th>Monto</th>
-            <th>Ver</th>
-            <th>Editar</th>
-            <th>Eliminar</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var trabajos in ListaTrabajos)
-        {
-            <tr>
-                <td>@trabajos.TrabajoId</td>
-                <td>@trabajos.Fecha.ToString("dd-MM-yyyy")</td>
-                <td>@trabajos.Clientes?.Nombres</td>
-                <td>@trabajos.Tecnicos?.Nombres</td>
-                <td>@trabajos.Prioridades?.Descripcion</td>
-                <td>@trabajos.Descripcion</td>
-                <td>@trabajos.Monto</td>
-
-                <td>
-                    <a href="/Trabajo/Details/@trabajos.TrabajoId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
-                </td>
-
-                <td>
-                    <a href="/Trabajo/Edit/@trabajos.TrabajoId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
-                </td>
-
-                <td>
-                    <a href="/Trabajo/Delete/@trabajos.TrabajoId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
-                </td>
-            </tr>
-        }
-    </tbody>
-
-</table>
-<div class="card-footer text-start">
-    <p>Total de Trabajos: @ListaTrabajos.Count</p>
 </div>
 
 @code {
@@ -133,4 +137,4 @@
         }
     }
 
-}
+    }
