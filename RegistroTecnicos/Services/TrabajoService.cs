@@ -27,7 +27,8 @@ public class TrabajoService
     private async Task<bool> Modificar(Trabajos trabajo)
     {
         _contexto.Trabajos.Update(trabajo);
-        var modificado = await _contexto.SaveChangesAsync() > 0;
+        var modificado = await _contexto.
+            SaveChangesAsync() > 0;
         return modificado;
     }
     //Metodo Guardar
@@ -43,6 +44,7 @@ public class TrabajoService
     {
         var eliminar = await _contexto.Trabajos
             .Where(T => T.TrabajoId == id)
+               .Include(t => t.TrabajosDetalle)
             .ExecuteDeleteAsync();
         return eliminar > 0;
     }
@@ -52,6 +54,7 @@ public class TrabajoService
         return await _contexto.Trabajos
             .AsNoTracking()
             .Include(t => t.Clientes)
+            .Include(t => t.TrabajosDetalle)
             .FirstOrDefaultAsync(T => T.TrabajoId == id);
     }
     //Metodo Listar
@@ -62,7 +65,8 @@ public class TrabajoService
             .Where(criterio)
             .Include(t => t.Clientes)
             .Include(t => t.Tecnicos)
-            .Include(t =>t.Prioridades)
+            .Include(t => t.Prioridades)
+            .Include(t => t.TrabajosDetalle)
             .ToListAsync();
     }
 
@@ -82,22 +86,32 @@ public class TrabajoService
 
     public async Task<List<TrabajosDetalle>> ListarDetalles(int trabajoId)
     {
-            // Busca los detalles del trabajo específico
-            var detalles = await _contexto.TrabajosDetalles
-                .Where(td => td.TrabajoId == trabajoId)
-                .ToListAsync();
+        // Busca los detalles del trabajo específico
+        var detalles = await _contexto.TrabajosDetalles
+            .Where(td => td.TrabajoId == trabajoId)
+            .ToListAsync();
 
-            return detalles;
-        
+        return detalles;
+
     }
-
     public async Task<List<TrabajosDetalle>> ObtenerDetalles(int trabajoId)
     {
         return await _contexto.TrabajosDetalles
             .AsNoTracking()
+            .Where(t => t.TrabajoId == trabajoId)
             .ToListAsync();
     }
 
-
-
+    public async Task<bool> EliminarDetalle(TrabajosDetalle detalle)
+    {
+        // Aquí busca el detalle en la base de datos y elimínalo.
+        var trabajoDetalleDb = await _contexto.TrabajosDetalles.FindAsync(detalle.DetalleId); // Asumiendo que tienes un Id en TrabajosDetalle
+        if (trabajoDetalleDb != null)
+        {
+            _contexto.TrabajosDetalles.Remove(trabajoDetalleDb);
+            await _contexto.SaveChangesAsync();
+            return true;
+        }
+        return false;
+    }
 }
