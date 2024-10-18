@@ -12,8 +12,8 @@
 {
     <div class="container">
         <div class="card shadow-header">
-            <div class="card-header bg-primary text-center text-white py-2 rounded">
-                <h3 style="font-weight: bold;" class="font-weight-bold">Detalles del Trabajo</h3>
+            <div class="card-header bg-primary text-white py-2 rounded">
+                <h5 style="font-weight: bold;" class="font-weight-bold">Detalles del Trabajo</h5>
             </div>
             <div class="container">
                 <div class="row">
@@ -21,9 +21,9 @@
                         <div class="card-body">
                             <ul class="list-unstyled">
                                 <li><strong>TrabajoId:</strong> @trabajo.TrabajoId</li>
-                                <li><strong>Fecha:</strong> @trabajo.Fecha</li>
-                                <li><strong>ClienteId:</strong> @cliente.Nombres</li>
-                                <li><strong>TecnicoId:</strong> @tecnico.Nombres</li>
+                                <li><strong>Fecha:</strong> @trabajo.Fecha.ToShortDateString()</li>
+                                <li><strong>Cliente:</strong> @cliente.Nombres</li>
+                                <li><strong>Técnico:</strong> @tecnico.Nombres</li>
                                 <li><strong>Prioridad:</strong> @prioridad.Descripcion</li>
                                 <li><strong>Descripción:</strong> @trabajo.Descripcion</li>
                                 <li><strong>Monto:</strong> @trabajo.Monto</li>
@@ -31,83 +31,81 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="card mt-6 border-success">
+                    <div class="card-header bg-primary text-white ">
+                        <h5 class="font-weight-bold">Detalles de artículos utilizados</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive mt-3">
+                            <table class="table table-bordered text-center">
+                                <thead class="bg-primary text-white">
+                                    <tr>
+                                        <th>Artículo</th>
+                                        <th>Cantidad</th>
+                                        <th>Precio</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var detalle in listatrabajodetalle)
+                                    {
+                                        <tr>
+                                            <td>@detalle.ArticuloId @detalle.Articulo?.Descripcion</td>
+                                            <td>@detalle.Cantidad</td>
+                                            <td>@detalle.Precio.ToString("C")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-footer text-center">
+                    <a href="/Trabajo/Index" class="btn btn-outline-primary mx-2">
+                        <span class="bi bi-box-arrow-left"></span> Retroceder
+                    </a>
+                    <a href=@($"https://wa.me/{trabajo.Clientes?.WhatsApp}?text={ObtenerMensajeFinalizar()}") class="btn btn-outline-success mx-2">
+                        <span class="bi bi-whatsapp"></span> Finalizar
+                    </a>
+                </div>
             </div>
         </div>
-        <div class="card-footer d-inline-block">
-            <a href="/Trabajo/Index" class="btn btn-outline-primary">
-                <span class="bi bi-box-arrow-left"></span> Retroceder
-            </a>
-            <div class="card-footer d-inline-block">
-                <a href=@($"https://wa.me/{trabajo.Clientes?.WhatsApp}?text={ObtenerMensajeFinalizar()}") class="btn btn-outline-success">
-                    <span class="bi bi-whatsapp"></span> Finalizar
-                </a>
-            </div>
-        </div>
-     
     </div>
 }
 
 @code {
     [Parameter]
     public int TrabajoId { get; set; }
-
-    public Trabajos? trabajo { get; set; } = new Trabajos();
-    public Clientes? cliente { get; set; } = new Clientes();
-    public Tecnicos? tecnico { get; set; } = new Tecnicos();
-    public Prioridades? prioridad { get; set; } = new Prioridades();
+    public Trabajos? trabajo { get; set; }
+    public Clientes? cliente { get; set; }
+    public Tecnicos? tecnico { get; set; }
+    public Prioridades? prioridad { get; set; }
+    public Trabajos trabajos { get; set; } = new Trabajos();
+    public List<TrabajosDetalle> listatrabajodetalle { get; set; } = new List<TrabajosDetalle>();
+    public Articulos articulos { get; set; } = new Articulos();
+    public List<Articulos> listaarticulo = new List<Articulos>();
+    public TrabajosDetalle trabajosDetalle { get; set; } = new TrabajosDetalle();
 
     protected override async Task OnInitializedAsync()
     {
-        if (TrabajoId != 0)
-        {
-            trabajo = await trabajoService.Buscar(TrabajoId);
-
-            if (trabajo?.ClienteId.HasValue == true)
-            {
-                cliente = await clienteService.Buscar(trabajo.ClienteId.Value);
-            }
-            if (trabajo?.TecnicoId.HasValue == true)
-            {
-                tecnico = await tecnicoService.Buscar(trabajo.TecnicoId.Value);
-            }
-            if(trabajo?.PrioridadId.HasValue == true)
-            {
-                prioridad = await prioridadService.Buscar(trabajo.PrioridadId.Value);
-            }
-        }
+        await CargarTrabajoYDetalles();
+        trabajos = await trabajoService.Buscar(TrabajoId);
+        listatrabajodetalle = await trabajoService.ListarDetalles(TrabajoId);
     }
 
-    // Método para obtener la URL de WhatsApp usando el número del cliente
-    private string ObtenerUrlWhatsApp()
+    private async Task CargarTrabajoYDetalles()
     {
-        if (cliente?.WhatsApp != null)
-        {
-            string mensaje = ObtenerMensajeFinalizar();
-            string mensajeEscapado = Uri.EscapeDataString(mensaje);
+        trabajo = await trabajoService.Buscar(TrabajoId);
+        cliente = trabajo?.ClienteId.HasValue == true ? await clienteService.Buscar(trabajo.ClienteId.Value) : null;
+        tecnico = trabajo?.TecnicoId.HasValue == true ? await tecnicoService.Buscar(trabajo.TecnicoId.Value) : null;
+        prioridad = trabajo?.PrioridadId.HasValue == true ? await prioridadService.Buscar(trabajo.PrioridadId.Value) : null;
 
-            string url = $"https://wa.me/{cliente.WhatsApp}?text={mensajeEscapado}";
-            return url;
-        }
-        else
-        {
-            return "#";
-        }
+        listatrabajodetalle = trabajo != null ? await trabajoService.ObtenerDetalles(TrabajoId) : new List<TrabajosDetalle>();
     }
 
-    // Método para generar el mensaje de finalización
     private string ObtenerMensajeFinalizar()
     {
         return $"El trabajo de {cliente?.Nombres} ya está finalizado.";
-    }
-
-    // Método para enviar el mensaje de WhatsApp
-    private async Task EnviarMensajeWhatsApp()
-    {
-        string urlWhatsApp = ObtenerUrlWhatsApp();
-
-        if (urlWhatsApp != "#")
-        {
-            navigationManager.NavigateTo(urlWhatsApp, true); 
-        }
     }
 }
