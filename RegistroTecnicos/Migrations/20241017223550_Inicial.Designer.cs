@@ -11,7 +11,7 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20241016194741_Inicial")]
+    [Migration("20241017223550_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -125,12 +125,9 @@ namespace RegistroTecnicos.Migrations
                     b.Property<int>("TipoTecnicoId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int?>("TiposTecnicosIdTipoTecnicoId")
-                        .HasColumnType("INTEGER");
-
                     b.HasKey("TecnicoId");
 
-                    b.HasIndex("TiposTecnicosIdTipoTecnicoId");
+                    b.HasIndex("TipoTecnicoId");
 
                     b.ToTable("Tecnicos");
                 });
@@ -199,8 +196,8 @@ namespace RegistroTecnicos.Migrations
                     b.Property<int>("ArticuloId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<double>("Cantidad")
-                        .HasColumnType("REAL");
+                    b.Property<decimal>("Cantidad")
+                        .HasColumnType("TEXT");
 
                     b.Property<decimal>("Costo")
                         .HasColumnType("TEXT");
@@ -224,7 +221,9 @@ namespace RegistroTecnicos.Migrations
                 {
                     b.HasOne("RegistroTecnicos.Models.TiposTecnicos", "TiposTecnicosId")
                         .WithMany("Tecnicos")
-                        .HasForeignKey("TiposTecnicosIdTipoTecnicoId");
+                        .HasForeignKey("TipoTecnicoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("TiposTecnicosId");
                 });
