@@ -50,7 +50,7 @@
                                     @foreach (var detalle in listatrabajodetalle)
                                     {
                                         <tr>
-                                            <td>@detalle.ArticuloId @detalle.Articulo?.Descripcion</td>
+                                            <td>@detalle.Articulo?.Descripcion</td>
                                             <td>@detalle.Cantidad</td>
                                             <td>@detalle.Precio.ToString("C")</td>
                                         </tr>
