@@ -18,7 +18,7 @@ public class TrabajosDetalle
     public Articulos Articulo { get; set; }
 
     [Required(ErrorMessage = "Favor Colocar la cantidad.")]
-    public decimal Cantidad { get; set; }
+    public int Cantidad { get; set; }
     [Required(ErrorMessage = "Favor Colocar el precio.")]
     public decimal Precio { get; set; }
     [Required(ErrorMessage = "Favor Colocar el costo.")]
