@@ -3,6 +3,7 @@
 @inject TrabajoService trabajoService
 @inject ClienteService clienteService
 @inject TecnicoService tecnicoService
+@inject ArticuloService articuloService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 @rendermode InteractiveServer
@@ -175,7 +176,6 @@
     public List<Clientes> clientes = new List<Clientes>();
     public List<Tecnicos> tecnicos = new List<Tecnicos>();
     public List<Prioridades> prioridades = new List<Prioridades>();
-    public Articulos articulos { get; set; } = new Articulos();
     public List<Articulos> listaarticulo = new List<Articulos>();
     public TrabajosDetalle trabajosDetalle { get; set; } = new TrabajosDetalle();
     public List<TrabajosDetalle> listatrabajodetalle { get; set; } = new List<TrabajosDetalle>();
@@ -189,47 +189,44 @@
         prioridades = await trabajoService.ListarPrioridades();
         listaarticulo = await trabajoService.ListarArticulos();
 
+        // Cargar el trabajo a modificar
         trabajos = await trabajoService.Buscar(TrabajoId);
-
         listatrabajodetalle = await trabajoService.ListarDetalles(TrabajoId);
-
 
         if (trabajos.TrabajosDetalle == null)
         {
             trabajos.TrabajosDetalle = new List<TrabajosDetalle>();
         }
-
-
     }
 
     public async Task AgregarDetalle()
     {
         var articuloSeleccionado = listaarticulo.FirstOrDefault(a => a.ArticuloId == selectedArticuloId);
 
-        if (articuloSeleccionado != null && trabajosDetalle.Cantidad > 0)
+        if (articuloSeleccionado == null || trabajosDetalle.Cantidad <= 0)
         {
-            // Asignar el precio del artículo seleccionado
-            trabajosDetalle.Precio = articuloSeleccionado.Precio;
-
-            // Calcular el total del detalle (cantidad * precio del artículo)
-            var nuevoDetalle = new TrabajosDetalle
-                {
-                    ArticuloId = articuloSeleccionado.ArticuloId,
-                    Cantidad = trabajosDetalle.Cantidad,
-                    Precio = articuloSeleccionado.Precio
-                };
-
-            // Agregar el detalle a la lista
-            listatrabajodetalle.Add(nuevoDetalle);
-
-            // Limpiar los campos del formulario
-            trabajosDetalle = new TrabajosDetalle();
-
-            // Actualizar el monto total sumando los precios de todos los detalles
-            CalcularTotal();
-
-            StateHasChanged();
+            toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe seleccionar un artículo y una cantidad válida."));
+            return;
         }
+
+        if (articuloSeleccionado.Existencia < trabajosDetalle.Cantidad)
+        {
+            toastService.Notify(new(ToastType.Warning, "Advertencia", "No hay suficiente existencia del artículo para completar la operación."));
+            return;
+        }
+
+        trabajosDetalle.Precio = articuloSeleccionado.Precio;
+        var nuevoDetalle = new TrabajosDetalle
+            {
+                ArticuloId = articuloSeleccionado.ArticuloId,
+                Cantidad = trabajosDetalle.Cantidad,
+                Precio = articuloSeleccionado.Precio
+            };
+
+        listatrabajodetalle.Add(nuevoDetalle);
+        trabajosDetalle = new TrabajosDetalle();
+        selectedArticuloId = 0;
+        await CalcularTotal();
     }
 
     private async Task CalcularTotal()
@@ -240,12 +237,11 @@
     public async Task EliminarDetalle(TrabajosDetalle detalle)
     {
         listatrabajodetalle.Remove(detalle);
+        await trabajoService.EliminarDetalle(detalle);
         selectedArticuloId = detalle.ArticuloId;
         trabajosDetalle.Cantidad = detalle.Cantidad;
         trabajosDetalle.Precio = detalle.Precio;
-        listatrabajodetalle.Remove(detalle);
-        CalcularTotal();
-        await trabajoService.EliminarDetalle(detalle);
+        await CalcularTotal();
         StateHasChanged();
     }
 
@@ -258,46 +254,48 @@
 
     public async Task<bool> Validar()
     {
-        // Solo validar si el TrabajoId es cero (nuevo trabajo)
+
         if (trabajos.TrabajoId == 0)
         {
             var listaTrabajo = await trabajoService.Listar(t => t.Descripcion.ToLower() == trabajos.Descripcion.ToLower());
             Existe = listaTrabajo.Any();
         }
-        else
-        {
-            // Ignorar validación de existencia para trabajos existentes
-            Existe = false;
-        }
-
         return Existe;
     }
-
 
     public async Task Guardar()
     {
         if (await Validar())
         {
             toastService.Notify(new(ToastType.Success,
-           iconName: IconName.None,
-           title: "Validacion",
-           helpText: "",
-           message: "Ya Existe un cliente con ese nombre en la consulta."));
+                iconName: IconName.None,
+                title: "Validación",
+                helpText: "",
+                message: "Ya existe un trabajo con esa descripción."));
             return;
         }
+
         trabajos.TrabajosDetalle = listatrabajodetalle;
+
+        // Actualizar existencia de los artículos al guardar
+        foreach (var detalle in listatrabajodetalle)
+        {
+            await articuloService.ActualizarExistencia(detalle.ArticuloId, detalle.Cantidad);
+        }
+
         var guardado = await trabajoService.Guardar(trabajos);
         if (guardado)
         {
             toastService.Notify(new(ToastType.Success,
-         iconName: IconName.None,
-         title: "Validacion",
-         helpText: "",
-         message: "El trabajo se a modificado correctamente."));
+                iconName: IconName.None,
+                title: "Éxito",
+                helpText: "",
+                message: "El trabajo se ha modificado correctamente."));
             Nuevo();
-            Retroceder();
+            await Retroceder();
         }
     }
+
     public async Task Retroceder()
     {
         navigationManager.NavigateTo("/Trabajo/Index");
