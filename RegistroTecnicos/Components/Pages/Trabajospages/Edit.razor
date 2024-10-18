@@ -240,6 +240,10 @@
     public async Task EliminarDetalle(TrabajosDetalle detalle)
     {
         listatrabajodetalle.Remove(detalle);
+        selectedArticuloId = detalle.ArticuloId;
+        trabajosDetalle.Cantidad = detalle.Cantidad;
+        trabajosDetalle.Precio = detalle.Precio;
+        listatrabajodetalle.Remove(detalle);
         CalcularTotal();
         await trabajoService.EliminarDetalle(detalle);
         StateHasChanged();
