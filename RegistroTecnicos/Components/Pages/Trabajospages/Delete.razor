@@ -3,6 +3,7 @@
 @inject TecnicoService tecnicoService
 @inject ClienteService clienteService
 @inject PrioridadService prioridadService
+@inject ArticuloService articuloService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 @rendermode InteractiveServer
@@ -70,35 +71,27 @@
 @code {
     [Parameter]
     public int TrabajoId { get; set; }
-    public Trabajos? trabajo { get; set; } = new Trabajos();
-    public string tipoDescripcion { get; set; }
-    public Clientes? cliente { get; set; } = new Clientes();
-    public Tecnicos? tecnico { get; set; } = new Tecnicos();
-    public Prioridades? prioridad { get; set; } = new Prioridades();
-    public Trabajos trabajos { get; set; } = new Trabajos();
+    public Trabajos trabajo { get; set; } = new Trabajos();
     public List<TrabajosDetalle> listatrabajodetalle { get; set; } = new List<TrabajosDetalle>();
     public Articulos articulos { get; set; } = new Articulos();
     public List<Articulos> listaarticulo = new List<Articulos>();
     public TrabajosDetalle trabajosDetalle { get; set; } = new TrabajosDetalle();
-
-    private bool existe = false;
+    public Clientes cliente { get; set; } = new Clientes();
+    public Tecnicos tecnico { get; set; } = new Tecnicos();
+    public Prioridades prioridad { get; set; } = new Prioridades();
 
     protected override async Task OnInitializedAsync()
     {
         await CargarTrabajoYDetalles();
-        trabajos = await trabajoService.Buscar(TrabajoId);
+        trabajo = await trabajoService.Buscar(TrabajoId);
         listatrabajodetalle = await trabajoService.ListarDetalles(TrabajoId);
-
     }
 
     private async Task CargarTrabajoYDetalles()
     {
         trabajo = await trabajoService.Buscar(TrabajoId);
-        cliente = trabajo?.ClienteId.HasValue == true ? await clienteService.Buscar(trabajo.ClienteId.Value) : null;
-        tecnico = trabajo?.TecnicoId.HasValue == true ? await tecnicoService.Buscar(trabajo.TecnicoId.Value) : null;
-        prioridad = trabajo?.PrioridadId.HasValue == true ? await prioridadService.Buscar(trabajo.PrioridadId.Value) : null;
-
         listatrabajodetalle = trabajo != null ? await trabajoService.ObtenerDetalles(TrabajoId) : new List<TrabajosDetalle>();
+
     }
 
     public async Task EliminarTrabajo()
@@ -107,15 +100,48 @@
         {
             return;
         }
+
+        var detalles = await trabajoService.ListarDetalles(TrabajoId);
+
         if (await trabajoService.Eliminar(TrabajoId))
         {
+            // Restaurar cantidades de los artículos
+            foreach (var detalle in detalles)
+            {
+                await articuloService.AgregarCantidad(detalle.ArticuloId, detalle.Cantidad);
+            }
+
             toastService.Notify(new(ToastType.Success,
             iconName: IconName.None,
-            title: "Validacion",
+            title: "Validación",
             helpText: "",
-            message: "El Trabajo se a eliminado correctamente."));
+            message: "El trabajo se ha eliminado correctamente."));
             Retroceder();
         }
+    }
+
+    public async Task EliminarDetalle(TrabajosDetalle detalle)
+    {
+        if (detalle == null || !listatrabajodetalle.Contains(detalle))
+        {
+            return;
+        }
+
+        // Eliminar el detalle de la lista
+        listatrabajodetalle.Remove(detalle);
+
+        // Restaurar la cantidad del artículo al eliminar el detalle
+        await articuloService.AgregarCantidad(detalle.ArticuloId, detalle.Cantidad);
+        // Llamar al servicio para eliminar el detalle de la base de datos
+        await trabajoService.EliminarDetalle(detalle);
+        await CalcularTotal();
+
+        toastService.Notify(new(ToastType.Success, "Éxito", "El detalle se ha eliminado correctamente."));
+    }
+
+    private async Task CalcularTotal()
+    {
+        trabajo.Monto = listatrabajodetalle.Sum(d => d.Precio * d.Cantidad);
     }
 
     public async Task Retroceder()
