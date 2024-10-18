@@ -6,62 +6,67 @@
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 @rendermode InteractiveServer
-
+`
 <PageTitle>Eliminar Trabajo</PageTitle>
 
 <div class="container">
     <div class="card shadow-header">
-        <div class="card-header bg-primary text-white text-center py-2 rounded">
-            <h3><strong>Eliminar Trabajo</strong></h3>
+        <div class="card-header bg-primary  text-white py-2 rounded">
+            <h5 style="font-weight: bold;" class="font-weight-bold">Eliminar Trabajo</h5>
         </div>
-
-        <div class="card-header text-center">
-            <h3 class="text-danger">¿Estás seguro de que quieres eliminar este trabajo?</h3>
-        </div>
-
-        <div class="container ">
-            <div class="row justify-content-center ">
+        <div class="container">
+            <div class="row">
                 <div class="col-md-6">
-                    <div class="card shadow-lg ">
-                        <div class="card-header ">
-                            <h3 class="text-center "><strong>Datos del trabajo</strong></h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="border-primary border-2 borde">
-                                <div class="card-body">
-                                    <div class="row">
-                                        <div class="col-md-8">
-                                            <ul class="list-unstyled ">
-                                                <li><strong>TrabajoId:</strong> @trabajo.TrabajoId</li>
-                                                <li><strong>Fecha:</strong> @trabajo.Fecha</li>
-                                                <li><strong>ClienteId:</strong> @cliente.Nombres</li>
-                                                <li><strong>TecnicoId:</strong> @tecnico.Nombres</li>
-                                                <li><strong>Prioridad:</strong> @prioridad.Descripcion</li>
-                                                <li><strong>Descripci&oacute;n:</strong> @trabajo.Descripcion</li>
-                                                <li><strong>Monto:</strong> @trabajo.Monto</li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="card-body">
+                        <ul class="list-unstyled">
+                            <li><strong>TrabajoId:</strong> @trabajo.TrabajoId</li>
+                            <li><strong>Fecha:</strong> @trabajo.Fecha.ToShortDateString()</li>
+                            <li><strong>Cliente:</strong> @cliente.Nombres</li>
+                            <li><strong>Técnico:</strong> @tecnico.Nombres</li>
+                            <li><strong>Prioridad:</strong> @prioridad.Descripcion</li>
+                            <li><strong>Descripción:</strong> @trabajo.Descripcion</li>
+                            <li><strong>Monto:</strong> @trabajo.Monto</li>
+                        </ul>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="card-footer text-center">
-            <button type="button" class="btn btn-outline-danger" @onclick="EliminarTrabajo"><i class="bi bi-trash-fill"></i> Eliminar</button>
-            <button type="button" class="btn btn-outline-primary" @onclick="Retroceder"><i class="bi bi-box-arrow-left"></i> Retroceder</button>
+            <div class="card mt-6 border-success">
+                <div class="card-header bg-primary text-white ">
+                    <h5 class="font-weight-bold">Detalles de artículos utilizados</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered text-center">
+                            <thead class="bg-primary text-white">
+                                <tr>
+                                    <th>Artículo</th>
+                                    <th>Cantidad</th>
+                                    <th>Precio</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var detalle in listatrabajodetalle)
+                                {
+                                    <tr>
+                                        <td>@detalle.ArticuloId @detalle.Articulo?.Descripcion</td>
+                                        <td>@detalle.Cantidad</td>
+                                        <td>@detalle.Precio.ToString("C")</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-footer text-center">
+                <button type="button" class="btn btn-outline-danger" @onclick="EliminarTrabajo"><i class="bi bi-trash-fill"></i> Eliminar</button>
+                <button type="button" class="btn btn-outline-primary" @onclick="Retroceder"><i class="bi bi-box-arrow-left"></i> Retroceder</button>
+            </div>
         </div>
     </div>
 </div>
-
-@if (trabajo == null)
-{
-    <p>Técnico no encontrado.</p>
-}
-
 @code {
     [Parameter]
     public int TrabajoId { get; set; }
@@ -70,28 +75,30 @@
     public Clientes? cliente { get; set; } = new Clientes();
     public Tecnicos? tecnico { get; set; } = new Tecnicos();
     public Prioridades? prioridad { get; set; } = new Prioridades();
+    public Trabajos trabajos { get; set; } = new Trabajos();
+    public List<TrabajosDetalle> listatrabajodetalle { get; set; } = new List<TrabajosDetalle>();
+    public Articulos articulos { get; set; } = new Articulos();
+    public List<Articulos> listaarticulo = new List<Articulos>();
+    public TrabajosDetalle trabajosDetalle { get; set; } = new TrabajosDetalle();
 
     private bool existe = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (TrabajoId != 0)
-        {
-            trabajo = await trabajoService.Buscar(TrabajoId);
+        await CargarTrabajoYDetalles();
+        trabajos = await trabajoService.Buscar(TrabajoId);
+        listatrabajodetalle = await trabajoService.ListarDetalles(TrabajoId);
 
-            if (trabajo?.ClienteId.HasValue == true)
-            {
-                cliente = await clienteService.Buscar(trabajo.ClienteId.Value);
-            }
-            if (trabajo?.TecnicoId.HasValue == true)
-            {
-                tecnico = await tecnicoService.Buscar(trabajo.TecnicoId.Value);
-            }
-            if (trabajo?.PrioridadId.HasValue == true)
-            {
-                prioridad = await prioridadService.Buscar(trabajo.PrioridadId.Value);
-            }
-        }
+    }
+
+    private async Task CargarTrabajoYDetalles()
+    {
+        trabajo = await trabajoService.Buscar(TrabajoId);
+        cliente = trabajo?.ClienteId.HasValue == true ? await clienteService.Buscar(trabajo.ClienteId.Value) : null;
+        tecnico = trabajo?.TecnicoId.HasValue == true ? await tecnicoService.Buscar(trabajo.TecnicoId.Value) : null;
+        prioridad = trabajo?.PrioridadId.HasValue == true ? await prioridadService.Buscar(trabajo.PrioridadId.Value) : null;
+
+        listatrabajodetalle = trabajo != null ? await trabajoService.ObtenerDetalles(TrabajoId) : new List<TrabajosDetalle>();
     }
 
     public async Task EliminarTrabajo()
