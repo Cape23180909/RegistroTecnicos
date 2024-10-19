@@ -22,9 +22,9 @@
                             <ul class="list-unstyled">
                                 <li><strong>TrabajoId:</strong> @trabajo.TrabajoId</li>
                                 <li><strong>Fecha:</strong> @trabajo.Fecha.ToShortDateString()</li>
-                                <li><strong>Cliente:</strong> @cliente.Nombres</li>
-                                <li><strong>Técnico:</strong> @tecnico.Nombres</li>
-                                <li><strong>Prioridad:</strong> @prioridad.Descripcion</li>
+                                <li><strong>Cliente:</strong> @cliente?.Nombres ?? "No disponible"</li>
+                                <li><strong>Técnico:</strong> @tecnico?.Nombres ?? "No disponible"</li>
+                                <li><strong>Prioridad:</strong> @prioridad?.Descripcion ?? "No disponible"</li>
                                 <li><strong>Descripción:</strong> @trabajo.Descripcion</li>
                                 <li><strong>Monto:</strong> @trabajo.Monto</li>
                             </ul>
@@ -33,31 +33,39 @@
                 </div>
 
                 <div class="card mt-6 border-success">
-                    <div class="card-header bg-primary text-white ">
+                    <div class="card-header bg-primary text-white">
                         <h5 class="font-weight-bold">Detalles de artículos utilizados</h5>
                     </div>
                     <div class="card-body">
-                        <div class="table-responsive mt-3">
-                            <table class="table table-bordered text-center">
-                                <thead class="bg-primary text-white">
-                                    <tr>
-                                        <th>Artículo</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var detalle in listatrabajodetalle)
-                                    {
+                        @if (listatrabajodetalle != null && listatrabajodetalle.Any())
+                        {
+                            <div class="table-responsive mt-3">
+                                <table class="table table-bordered text-center">
+                                    <thead class="bg-primary text-white">
                                         <tr>
-                                            <td>@detalle.ArticuloId</td>
-                                            <td>@detalle.Cantidad</td>
-                                            <td>@detalle.Precio.ToString("C")</td>
+                                            <th>Artículo</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio</th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var detalle in listatrabajodetalle)
+                                        {
+                                            var articulo = listaarticulo.FirstOrDefault(a => a.ArticuloId == detalle.ArticuloId);
+                                            <tr>
+                                                <td>@(articulo?.Descripcion ?? "Artículo no encontrado")</td>
+                                                <td>@detalle.Cantidad</td>
+                                                <td>@detalle.Precio.ToString("C")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>No se han registrado artículos para este trabajo.</p>
+                        }
                     </div>
                 </div>
 
@@ -65,7 +73,7 @@
                     <a href="/Trabajo/Index" class="btn btn-outline-primary mx-2">
                         <span class="bi bi-box-arrow-left"></span> Retroceder
                     </a>
-                    <a href=@($"https://wa.me/{trabajo.Clientes?.WhatsApp}?text={ObtenerMensajeFinalizar()}") class="btn btn-outline-success mx-2">
+                    <a href=@($"https://wa.me/{cliente?.WhatsApp}?text={ObtenerMensajeFinalizar()}") class="btn btn-outline-success mx-2">
                         <span class="bi bi-whatsapp"></span> Finalizar
                     </a>
                 </div>
@@ -81,27 +89,26 @@
     public Clientes? cliente { get; set; }
     public Tecnicos? tecnico { get; set; }
     public Prioridades? prioridad { get; set; }
-    public Trabajos trabajos { get; set; } = new Trabajos();
     public List<TrabajosDetalle> listatrabajodetalle { get; set; } = new List<TrabajosDetalle>();
-    public Articulos articulos { get; set; } = new Articulos();
-    public List<Articulos> listaarticulo = new List<Articulos>();
-    public TrabajosDetalle trabajosDetalle { get; set; } = new TrabajosDetalle();
+    public List<Articulos> listaarticulo { get; set; } = new List<Articulos>();
 
     protected override async Task OnInitializedAsync()
     {
         await CargarTrabajoYDetalles();
-        trabajos = await trabajoService.Buscar(TrabajoId);
-        listatrabajodetalle = await trabajoService.ListarDetalles(TrabajoId);
     }
 
     private async Task CargarTrabajoYDetalles()
     {
         trabajo = await trabajoService.Buscar(TrabajoId);
-        cliente = trabajo?.ClienteId.HasValue == true ? await clienteService.Buscar(trabajo.ClienteId.Value) : null;
-        tecnico = trabajo?.TecnicoId.HasValue == true ? await tecnicoService.Buscar(trabajo.TecnicoId.Value) : null;
-        prioridad = trabajo?.PrioridadId.HasValue == true ? await prioridadService.Buscar(trabajo.PrioridadId.Value) : null;
 
-        listatrabajodetalle = trabajo != null ? await trabajoService.ObtenerDetalles(TrabajoId) : new List<TrabajosDetalle>();
+        if (trabajo != null)
+        {
+            cliente = trabajo.ClienteId.HasValue ? await clienteService.Buscar(trabajo.ClienteId.Value) : null;
+            tecnico = trabajo.TecnicoId.HasValue ? await tecnicoService.Buscar(trabajo.TecnicoId.Value) : null;
+            prioridad = trabajo.PrioridadId.HasValue ? await prioridadService.Buscar(trabajo.PrioridadId.Value) : null;
+            listatrabajodetalle = await trabajoService.ObtenerDetalles(TrabajoId);
+            listaarticulo = await trabajoService.ListarArticulos();
+        }
     }
 
     private string ObtenerMensajeFinalizar()

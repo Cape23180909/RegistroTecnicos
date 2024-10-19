@@ -33,7 +33,7 @@
             </div>
 
             <div class="card mt-6 border-success">
-                <div class="card-header bg-primary text-white ">
+                <div class="card-header bg-primary text-white">
                     <h5 class="font-weight-bold">Detalles de artículos utilizados</h5>
                 </div>
                 <div class="card-body">
@@ -49,8 +49,9 @@
                             <tbody>
                                 @foreach (var detalle in listatrabajodetalle)
                                 {
+                                    var articulo = listaarticulo.FirstOrDefault(a => a.ArticuloId == detalle.ArticuloId);
                                     <tr>
-                                        <td>@detalle.ArticuloId @detalle.Articulo?.Descripcion</td>
+                                        <td>@(articulo?.Descripcion ?? "Artículo no encontrado")</td>
                                         <td>@detalle.Cantidad</td>
                                         <td>@detalle.Precio.ToString("C")</td>
                                     </tr>
@@ -62,12 +63,16 @@
             </div>
 
             <div class="card-footer text-center">
-                <button type="button" class="btn btn-outline-danger" @onclick="EliminarTrabajo"><i class="bi bi-trash-fill"></i> Eliminar</button>
-                <button type="button" class="btn btn-outline-primary" @onclick="Retroceder"><i class="bi bi-box-arrow-left"></i> Retroceder</button>
+                <button type="button" class="btn btn-outline-danger" @onclick="EliminarTrabajo">
+                    <i class="bi bi-trash-fill"></i> Eliminar
+                </button>
+                <button type="button" class="btn btn-outline-primary" @onclick="Retroceder">
+                    <i class="bi bi-box-arrow-left"></i> Retroceder
+                </button>
             </div>
         </div>
     </div>
-</div
+</div>
 
 @code {
     [Parameter]
@@ -86,13 +91,21 @@
         await CargarTrabajoYDetalles();
         trabajo = await trabajoService.Buscar(TrabajoId);
         listatrabajodetalle = await trabajoService.ListarDetalles(TrabajoId);
+        listaarticulo = await trabajoService.ListarArticulos();
     }
 
     private async Task CargarTrabajoYDetalles()
     {
         trabajo = await trabajoService.Buscar(TrabajoId);
-        listatrabajodetalle = trabajo != null ? await trabajoService.ObtenerDetalles(TrabajoId) : new List<TrabajosDetalle>();
 
+        if (trabajo != null)
+        {
+            cliente = trabajo.ClienteId.HasValue ? await clienteService.Buscar(trabajo.ClienteId.Value) : null;
+            tecnico = trabajo.TecnicoId.HasValue ? await tecnicoService.Buscar(trabajo.TecnicoId.Value) : null;
+            prioridad = trabajo.PrioridadId.HasValue ? await prioridadService.Buscar(trabajo.PrioridadId.Value) : null;
+            listatrabajodetalle = await trabajoService.ObtenerDetalles(TrabajoId);
+            listaarticulo = await trabajoService.ListarArticulos();
+        }
     }
 
     public async Task EliminarTrabajo()
@@ -119,30 +132,6 @@
             message: "El trabajo se ha eliminado correctamente."));
             Retroceder();
         }
-    }
-
-    public async Task EliminarDetalle(TrabajosDetalle detalle)
-    {
-        if (detalle == null || !listatrabajodetalle.Contains(detalle))
-        {
-            return;
-        }
-
-        // Eliminar el detalle de la lista
-        listatrabajodetalle.Remove(detalle);
-
-        // Restaurar la cantidad del artículo al eliminar el detalle
-        await articuloService.AgregarCantidad(detalle.ArticuloId, detalle.Cantidad);
-        // Llamar al servicio para eliminar el detalle de la base de datos
-        await trabajoService.EliminarDetalle(detalle);
-        await CalcularTotal();
-
-        toastService.Notify(new(ToastType.Success, "Éxito", "El detalle se ha eliminado correctamente."));
-    }
-
-    private async Task CalcularTotal()
-    {
-        trabajo.Monto = listatrabajodetalle.Sum(d => d.Precio * d.Cantidad);
     }
 
     public async Task Retroceder()
