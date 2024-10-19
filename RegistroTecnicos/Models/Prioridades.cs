@@ -8,5 +8,5 @@ public class Prioridades
     [Required(ErrorMessage = "Llenar este campo por favor.")]
     public string? Descripcion { get; set; }
     [Required(ErrorMessage = "Llenar este campo por favor.")]
-    public double? Tiempo { get; set; }
+    public string? Tiempo { get; set; }
 }
