@@ -7,7 +7,31 @@
 
 <div class="card-header bg-primary text-center text-white py-2 rounded">
     <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de Prioridades</h3>
-</div>
+</div
+
+<div class="row mb-3 align-items-end">
+    <div class="col md-3">
+        <label for="Filtro" class="form-label">Filtrar por:</label>
+        <select @bind="filtro" class="form-select">
+            <option value="ID">PrioridadId</option>
+            <option value="Descripcion">Descripci&oacute;n</option>
+        </select>
+    </div>
+
+    <div class="col md-6">
+        <label for="ValorFiltro" class="form-label">Busqueda:</label>
+        <div class="input-group">
+            <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+            <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
+                <span class="bi bi-search"></span>Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="col md-3 text-end">
+        <a href="/Prioridad/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+    </div>
+    </div>
 
 <div class="col md-3 text-end">
     <a href="" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
@@ -33,15 +57,15 @@
                 <td>@prioridad.Tiempo</td>
 
                 <td>
-                    <a href="/Tecnico/Details/@prioridad.PrioridadId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
+                    <a href="/Prioridad/Details/@prioridad.PrioridadId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
                 </td>
 
                 <td>
-                    <a href="/Tecnico/Edit/@prioridad.PrioridadId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
+                    <a href="/Prioridad/Edit/@prioridad.PrioridadId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
                 </td>
 
                 <td>
-                    <a href="/Tecnico/Delete/@prioridad.PrioridadId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
+                    <a href="/Prioridad/Delete/@prioridad.PrioridadId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
                 </td>
             </tr>
         }
@@ -54,10 +78,30 @@
 @code {
     public Prioridades prioridades = new Prioridades();
     public List<Prioridades> ListaPrioriades = new List<Prioridades>();
+    public string filtro = "ID";
+    public string valorFiltro = "";
 
     protected override async Task OnInitializedAsync()
     {
         ListaPrioriades = await prioridadService.Listar(p => true);
     }
 
+       public async Task Buscar()
+      {
+        if (string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            ListaPrioriades = await prioridadService.Listar(P => true);
+        }
+        else
+        {
+            if (filtro == "ID" && int.TryParse(valorFiltro, out int prioridadId))
+            {
+                ListaPrioriades = await prioridadService.Listar(a => a.PrioridadId == prioridadId);
+            }
+            else if (filtro == "Descripcion")
+            {
+                ListaPrioriades = await prioridadService.Listar(a => a.Descripcion.Contains(valorFiltro));
+            }
+        }
+    }
 }
