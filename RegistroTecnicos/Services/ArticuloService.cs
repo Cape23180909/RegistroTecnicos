@@ -28,19 +28,39 @@ public class ArticuloService
     }
 
     // Método para actualizar la existencia de un artículo
-    public async Task ActualizarExistencia(int articuloId, double cantidad)
+    public async Task<bool> ActualizarExistencia(int articuloId, double cantidad)
     {
         var articulo = await _contexto.Articulos.FindAsync(articuloId);
+
         if (articulo != null)
         {
-            articulo.Existencia -= cantidad; // Reducir la existencia
-            _contexto.Articulos.Update(articulo);
-            await _contexto.SaveChangesAsync();
+            // Verifica que la cantidad a reducir no sea mayor que la existencia actual
+            if (articulo.Existencia >= cantidad)
+            {
+                articulo.Existencia -= cantidad; // Reducir la existencia
+                _contexto.Articulos.Update(articulo);
+                await _contexto.SaveChangesAsync();
+                return true; // Indica que la operación fue exitosa
+            }
+            else
+            {
+                // Opcional: Manejar el caso donde la cantidad a reducir es mayor que la existencia
+                // Puedes lanzar una excepción o manejarlo de otra forma
+                throw new InvalidOperationException("No hay suficiente existencia para reducir.");
+            }
         }
+        return false; // Indica que el artículo no fue encontrado
     }
 
-    public async Task AgregarCantidad(int articuloId, int cantidad)
+
+    public async Task<bool> AgregarCantidad(int articuloId, int cantidad)
     {
+        // Validar que la cantidad sea positiva
+        if (cantidad <= 0)
+        {
+            throw new ArgumentException("La cantidad a agregar debe ser mayor que cero.");
+        }
+
         // Buscar el artículo por ID
         var articulo = await _contexto.Articulos.FindAsync(articuloId);
 
@@ -50,7 +70,18 @@ public class ArticuloService
             articulo.Existencia += cantidad;
 
             // Guardar los cambios en la base de datos
+            _contexto.Articulos.Update(articulo);
             await _contexto.SaveChangesAsync();
+            return true; // Indica que la operación fue exitosa
         }
+        return false; // Indica que el artículo no fue encontrado
     }
+
+    public async Task<Articulos> Buscar(int articuloId)
+    {
+        return await _contexto.Articulos
+            .FirstOrDefaultAsync(a => a.ArticuloId == articuloId);
+    }
+
+
 }
