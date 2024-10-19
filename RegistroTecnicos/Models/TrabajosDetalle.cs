@@ -23,5 +23,4 @@ public class TrabajosDetalle
     public decimal Precio { get; set; }
     [Required(ErrorMessage = "Favor Colocar el costo.")]
     public decimal Costo { get; set; }
-
 }
