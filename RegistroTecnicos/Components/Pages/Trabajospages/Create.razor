@@ -192,46 +192,35 @@
     public async Task AgregarDetalle()
     {
         var articuloSeleccionado = listaarticulo.FirstOrDefault(a => a.ArticuloId == selectedArticuloId);
-
-        // Validar que un artículo haya sido seleccionado y que la cantidad sea mayor a 0
         if (articuloSeleccionado == null || trabajosDetalle.Cantidad <= 0)
         {
             toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe seleccionar un artículo y una cantidad válida."));
             return;
         }
 
-        // Verificar la existencia del artículo
         if (articuloSeleccionado.Existencia < trabajosDetalle.Cantidad)
         {
-            toastService.Notify(new(ToastType.Warning, "Advertencia", "No hay suficiente existencia del artículo para completar la operación."));
+            toastService.Notify(new(ToastType.Warning, "Advertencia", "No hay suficiente existencia del artículo para completar la operación manin."));
             return;
         }
 
-        // Asignar el precio del artículo seleccionado
         trabajosDetalle.Precio = articuloSeleccionado.Precio;
-
-        // Crear un nuevo detalle de trabajo
         var nuevoDetalle = new TrabajosDetalle
             {
                 ArticuloId = articuloSeleccionado.ArticuloId,
                 Cantidad = trabajosDetalle.Cantidad,
                 Precio = articuloSeleccionado.Precio
             };
-
-        // Agregar el nuevo detalle a la lista de detalles
         listatrabajodetalle.Add(nuevoDetalle);
-
-        // Reiniciar el detalle actual para que el formulario quede limpio
         trabajosDetalle = new TrabajosDetalle();
         selectedArticuloId = 0;
-
-        // Calcular el nuevo monto total
         CalcularTotal();
     }
 
     private async Task CalcularTotal()
     {
-        trabajos.Monto = listatrabajodetalle.Sum(d => d.Precio * (decimal)d.Cantidad);
+        trabajos.Monto = listatrabajodetalle
+        .Sum(d => d.Precio * (decimal)d.Cantidad);
     }
 
     public async Task EliminarDetalle(TrabajosDetalle detalle)
@@ -252,7 +241,8 @@
 
     public async Task<bool> Validar()
     {
-        Existe = await trabajoService.Existe(trabajos.TrabajoId);
+        Existe = await trabajoService
+        .Existe(trabajos.TrabajoId);
         return Existe;
     }
 
@@ -260,11 +250,12 @@
     {
         foreach (var detalle in listatrabajodetalle)
         {
-            var articulo = await articuloService.ObtenerArticuloPorId(detalle.ArticuloId);
+            var articulo = await articuloService
+            .ObtenerArticuloPorId(detalle.ArticuloId);
             if (articulo == null || articulo.Existencia < detalle.Cantidad)
             {
                 toastService.Notify(new(ToastType.Warning, "Advertencia", $"No hay suficiente existencia del artículo {articulo?.Descripcion} para completar la operación."));
-                return; 
+                return;
             }
         }
 
@@ -279,7 +270,8 @@
         // Actualizar existencia de los artículos al guardar
         foreach (var detalle in listatrabajodetalle)
         {
-            await articuloService.ActualizarExistencia(detalle.ArticuloId, detalle.Cantidad);
+            await articuloService
+            .ActualizarExistencia(detalle.ArticuloId, detalle.Cantidad);
         }
 
         var guardado = await trabajoService.Guardar(trabajos);
