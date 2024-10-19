@@ -5,7 +5,9 @@
 @inject ArticuloService articuloService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
-@rendermode InteractiveServer
+@rendermode InteractiveServer 
+
+<PageTitle>Editar Trabajo</PageTitle>
 
 <EditForm Model="trabajos" OnValidSubmit="Guardar">
     <DataAnnotationsValidator />
