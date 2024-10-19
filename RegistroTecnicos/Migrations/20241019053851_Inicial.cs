@@ -161,8 +161,8 @@ namespace RegistroTecnicos.Migrations
                 values: new object[,]
                 {
                     { 1, 5.00m, "Lapicero", 100.0, 10.00m },
-                    { 2, 35.00m, "PaletaPayaso", 50.0, 50.00m },
-                    { 3, 45.00m, "Funda de pan", 15.0, 60.00m }
+                    { 2, 35.00m, "PaletaPayaso", 100.0, 50.00m },
+                    { 3, 45.00m, "Funda de pan", 100.0, 60.00m }
                 });
 
             migrationBuilder.CreateIndex(
