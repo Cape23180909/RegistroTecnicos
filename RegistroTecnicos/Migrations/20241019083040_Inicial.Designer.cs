@@ -11,7 +11,7 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20241019055730_Inicial")]
+    [Migration("20241019083040_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -48,7 +48,7 @@ namespace RegistroTecnicos.Migrations
                         {
                             ArticuloId = 1,
                             Costo = 5.00m,
-                            Descripcion = "Lapicero",
+                            Descripcion = "RJ45",
                             Existencia = 100.0,
                             Precio = 10.00m
                         },
@@ -56,7 +56,7 @@ namespace RegistroTecnicos.Migrations
                         {
                             ArticuloId = 2,
                             Costo = 35.00m,
-                            Descripcion = "PaletaPayaso",
+                            Descripcion = "Ethener",
                             Existencia = 100.0,
                             Precio = 50.00m
                         },
@@ -64,7 +64,7 @@ namespace RegistroTecnicos.Migrations
                         {
                             ArticuloId = 3,
                             Costo = 45.00m,
-                            Descripcion = "Funda de pan",
+                            Descripcion = "Switch",
                             Existencia = 100.0,
                             Precio = 60.00m
                         });

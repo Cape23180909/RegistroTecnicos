@@ -17,9 +17,9 @@ public class Contexto : DbContext
     {
         modelBuilder.Entity<Articulos>().HasData(new List<Articulos>()
     {
-        new Articulos { ArticuloId = 1, Descripcion = "Lapicero", Costo = 5.00m, Precio = 10.00m, Existencia = 100 },
-        new Articulos { ArticuloId = 2, Descripcion = "PaletaPayaso", Costo = 35.00m, Precio = 50.00m, Existencia = 100 },
-        new Articulos { ArticuloId = 3, Descripcion = "Funda de pan", Costo = 45.00m, Precio = 60.00m, Existencia = 100 }
+        new Articulos { ArticuloId = 1, Descripcion = "RJ45", Costo = 5.00m, Precio = 10.00m, Existencia = 100 },
+        new Articulos { ArticuloId = 2, Descripcion = "Ethener", Costo = 35.00m, Precio = 50.00m, Existencia = 100 },
+        new Articulos { ArticuloId = 3, Descripcion = "Switch", Costo = 45.00m, Precio = 60.00m, Existencia = 100 }
     });
         modelBuilder.Entity<Tecnicos>()
            .HasOne(tt => tt.TiposTecnicosId)

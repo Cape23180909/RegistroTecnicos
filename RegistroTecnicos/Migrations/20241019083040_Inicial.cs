@@ -160,9 +160,9 @@ namespace RegistroTecnicos.Migrations
                 columns: new[] { "ArticuloId", "Costo", "Descripcion", "Existencia", "Precio" },
                 values: new object[,]
                 {
-                    { 1, 5.00m, "Lapicero", 100.0, 10.00m },
-                    { 2, 35.00m, "PaletaPayaso", 100.0, 50.00m },
-                    { 3, 45.00m, "Funda de pan", 100.0, 60.00m }
+                    { 1, 5.00m, "RJ45", 100.0, 10.00m },
+                    { 2, 35.00m, "Ethener", 100.0, 50.00m },
+                    { 3, 45.00m, "Switch", 100.0, 60.00m }
                 });
 
             migrationBuilder.CreateIndex(
