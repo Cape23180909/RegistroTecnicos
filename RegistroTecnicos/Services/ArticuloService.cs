@@ -3,18 +3,12 @@ using RegistroTecnicos.Models;
 using Microsoft.EntityFrameworkCore;
 namespace RegistroTecnicos.Services;
 
-public class ArticuloService
+public class ArticuloService(IDbContextFactory<Contexto> DbFactory)
 {
-    private readonly Contexto _contexto;
-
-    public ArticuloService(Contexto contexto)
-    {
-        _contexto = contexto;
-    }
-
     public async Task<List<Articulos>> ListarArticulos()
     {
-        return await _contexto.Articulos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Articulos
             .AsNoTracking()
             .ToListAsync();
     }
@@ -22,7 +16,8 @@ public class ArticuloService
     // Método para obtener un artículo por su ID
     public async Task<Articulos?> ObtenerArticuloPorId(int id)
     {
-        return await _contexto.Articulos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Articulos
             .AsNoTracking()
             .FirstOrDefaultAsync(a => a.ArticuloId == id);
     }
@@ -30,7 +25,8 @@ public class ArticuloService
     // Método para actualizar la existencia de un artículo
     public async Task<bool> ActualizarExistencia(int articuloId, double cantidad)
     {
-        var articulo = await _contexto.Articulos.FindAsync(articuloId);
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        var articulo = await contexto.Articulos.FindAsync(articuloId);
 
         if (articulo != null)
         {
@@ -38,8 +34,8 @@ public class ArticuloService
             if (articulo.Existencia >= cantidad)
             {
                 articulo.Existencia -= cantidad; // Reducir la existencia
-                _contexto.Articulos.Update(articulo);
-                await _contexto.SaveChangesAsync();
+                contexto.Articulos.Update(articulo);
+                await contexto.SaveChangesAsync();
                 return true; // Indica que la operación fue exitosa
             }
             else
@@ -52,9 +48,9 @@ public class ArticuloService
         return false; // Indica que el artículo no fue encontrado
     }
 
-
     public async Task<bool> AgregarCantidad(int articuloId, int cantidad)
     {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
         // Validar que la cantidad sea positiva
         if (cantidad <= 0)
         {
@@ -62,7 +58,7 @@ public class ArticuloService
         }
 
         // Buscar el artículo por ID
-        var articulo = await _contexto.Articulos.FindAsync(articuloId);
+        var articulo = await contexto.Articulos.FindAsync(articuloId);
 
         if (articulo != null)
         {
@@ -70,8 +66,8 @@ public class ArticuloService
             articulo.Existencia += cantidad;
 
             // Guardar los cambios en la base de datos
-            _contexto.Articulos.Update(articulo);
-            await _contexto.SaveChangesAsync();
+            contexto.Articulos.Update(articulo);
+            await contexto.SaveChangesAsync();
             return true; // Indica que la operación fue exitosa
         }
         return false; // Indica que el artículo no fue encontrado
@@ -79,9 +75,8 @@ public class ArticuloService
 
     public async Task<Articulos> Buscar(int articuloId)
     {
-        return await _contexto.Articulos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Articulos
             .FirstOrDefaultAsync(a => a.ArticuloId == articuloId);
     }
-
-
 }

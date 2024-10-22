@@ -5,41 +5,41 @@ using System.Linq.Expressions;
 
 namespace RegistroTecnicos.Services;
 
-public class TecnicoService
+public class TecnicoService(IDbContextFactory<Contexto> DbFactory)
 {
-    private readonly Contexto _contexto;
-    public TecnicoService(Contexto contexto)
-    {
-        _contexto = contexto;
-    }
+  
     //Metodo Existe
     public async Task<bool> Existe(int id)
     {
-        return await _contexto.Tecnicos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Tecnicos
             .AnyAsync(t => t.TecnicoId == id);
     }
     //Metodo el cual Nos Identifica si ese tecnico esta registrado en la base de datos
     public async Task<bool> ExisteNombreTecnico(string nombre, int id)
     {
-        return await _contexto.Tecnicos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Tecnicos
             .AnyAsync(t => t.Nombres.ToLower().Equals(nombre.ToLower()) && t.TecnicoId != id);
     }
     //Metodo Insertar
     private async Task<bool> Insertar(Tecnicos tecnico)
     {
-        _contexto.Tecnicos.Add(tecnico);
-        return await _contexto.SaveChangesAsync() > 0;
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        contexto.Tecnicos.Add(tecnico);
+        return await contexto.SaveChangesAsync() > 0;
     }
     //Metodo Modificar 
     private async Task<bool> Modificar(Tecnicos tecnico)
     {
-        _contexto.Tecnicos.Update(tecnico);
-        var Modificado = await _contexto.SaveChangesAsync() > 0;
-        return Modificado;
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        contexto.Update(tecnico);
+        return await contexto.SaveChangesAsync() > 0;
     }
     //Metodo Guardar
     public async Task<bool> Guardar(Tecnicos tecnico)
     {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
         if (!await Existe(tecnico.TecnicoId))
 
             return await Insertar(tecnico);
@@ -49,7 +49,8 @@ public class TecnicoService
     //Metodo Eliminar 
     public async Task<bool> Eliminar(int id)
     {
-        var EliminarTecnico = await _contexto.Tecnicos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        var EliminarTecnico = await contexto.Tecnicos
             .Where(t => t.TecnicoId == id)
             .ExecuteDeleteAsync();
         return EliminarTecnico > 0;
@@ -57,14 +58,16 @@ public class TecnicoService
     //Metodo Buscar 
     public async Task<Tecnicos?> Buscar(int id)
     {
-        return await _contexto.Tecnicos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Tecnicos
             .AsNoTracking()
             .FirstOrDefaultAsync(t => t.TecnicoId == id);
     }
     //Metodo Listar
     public async Task<List<Tecnicos>> Listar(Expression<Func<Tecnicos, bool>> criterio)
     {
-        return await _contexto.Tecnicos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Tecnicos
             .AsNoTracking()
             .Include(t => t.TiposTecnicosId)
             .Where(criterio)
@@ -72,7 +75,8 @@ public class TecnicoService
     }
     public async Task<List<Tecnicos>> ListarTecnicos()
     {
-        return await _contexto.Tecnicos
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        return await contexto.Tecnicos
             .AsNoTracking()
             .ToListAsync();
     }
