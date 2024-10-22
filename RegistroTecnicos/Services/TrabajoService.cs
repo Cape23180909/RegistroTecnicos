@@ -26,9 +26,9 @@ public class TrabajoService
     //Metodo Modificar
     private async Task<bool> Modificar(Trabajos trabajo)
     {
-        _contexto.Trabajos.Update(trabajo);
-        var modificado = await _contexto.SaveChangesAsync() > 0;
-        return modificado;
+        _contexto.Update(trabajo);
+        return await _contexto
+            .SaveChangesAsync() > 0;
     }
     //Metodo Guardar
     public async Task<bool> Guardar(Trabajos trabajo)
