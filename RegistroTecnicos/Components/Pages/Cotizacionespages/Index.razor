@@ -1,0 +1,130 @@
+﻿@page "/Cotizacion/Index"
+@inject CotizacionService cotizacionService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Consulta de Cotizaciones</PageTitle>
+
+<div class="container">
+    <div class="card shadow-lg ">
+        <div class="card-header space-between">
+            <h5 class="card-title">Consulta de cotizaciones</h5>
+        </div>
+
+        <div class="row mb-3 align-items-end">
+            <div class="col md-3">
+                <label for="Filtro" class="form-label">Filtrar por:</label>
+                <select @bind="filtro" class="form-select">
+                    <option value="ID">CotizacionId</option>
+                    <option value="Fecha">Fecha</option>
+                    <option value="Cliente">Cliente</option>
+                </select>
+            </div>
+
+            <div class="col md-6">
+                <label for="ValorFiltro" class="form-label">Busqueda:</label>
+                <div class="input-group">
+                    <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+                    <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span>Buscar
+                    </button>
+                </div>
+            </div>
+
+            <div class="col md-3 text-end">
+                <a href="" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+            </div>
+        </div>
+
+        <table class="table table-bordered text-center">
+            <thead class="border-primary text-white">
+                <tr>
+                    <th>CotizacionId</th>
+                    <th>Fecha</th>
+                    <th>ClienteId</th>
+                    <th>Observacion</th>
+                    <th>Monto</th>
+                    <th>Ver</th>
+                    <th>Modificar</th>
+                    <th>Eliminar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var cotizacion in Listacotizacion)
+                {
+                    <tr>
+                        <td>@cotizacion.CotizacionId</td>
+                        <td>@cotizacion.Fecha.ToString("dd-MM-yyyy")</td>
+                        <td>@cotizacion.ClienteId</td>
+                        <td>@cotizacion.Observacion</td>
+                        <td>@cotizacion.Monto</td>
+
+                        <td>
+                            <a href="/Trabajo/Details/@cotizacion.CotizacionId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
+                        </td>
+
+                        <td>
+                            <a href="/Trabajo/Edit/@cotizacion.CotizacionId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
+                        </td>
+
+                        <td>
+                            <a href="/Trabajo/Delete/@cotizacion.CotizacionId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+
+        </table>
+        <div class="card-footer text-start">
+            <p>Total de cotizaciones: @Listacotizacion.Count</p>
+        </div>
+    </div>
+</div>
+
+@code {
+    public Cotizaciones cotizacion { get; set; } = new Cotizaciones();
+    public Clientes cliente { get; set; } = new Clientes();
+    public List<Cotizaciones> Listacotizacion { get; set; } = new List<Cotizaciones>();
+    public List<Clientes> listacliente { get; set; } = new List<Clientes>();
+    public string filtro = "ID";
+    public string valorFiltro = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        Listacotizacion = await cotizacionService.Listar(c => true);
+    }
+
+    public async Task Buscar()
+    {
+        if (string.IsNullOrWhiteSpace(valorFiltro))
+        {
+
+            Listacotizacion = await cotizacionService.Listar(t => true);
+        }
+        else
+        {
+            if (filtro == "ID" && int.TryParse(valorFiltro, out int trabajoId))
+            {
+                Listacotizacion = await cotizacionService.Listar(c => c.CotizacionId == trabajoId);
+            }
+
+            else if (filtro == "Cliente" && int.TryParse(valorFiltro, out int clienteId))
+            {
+                Listacotizacion = await cotizacionService.Listar(c => c.ClienteId == clienteId);
+            }
+
+            else if (filtro == "Fecha")
+            {
+                if (DateTime.TryParse(valorFiltro, out DateTime fechaFiltro))
+                {
+                    Listacotizacion = await cotizacionService.Listar(c => c.Fecha.Date == fechaFiltro.Date);
+                }
+                else
+                {
+                    Listacotizacion = new List<Cotizaciones>();
+                }
+            }
+
+        }
+    }
+}
