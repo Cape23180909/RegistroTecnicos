@@ -1,0 +1,94 @@
+﻿@page "/Cotizacion/Details/{CotizacionId:int}"
+@inject CotizacionService cotizacionService
+@inject ClienteService clienteService
+@inject ArticuloService articuloService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles de Cotización</PageTitle>
+
+@if (cotizacion != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header text-center">
+                <h5 style="font-weight:" class="font-weight-bold">Detalles de la Cotización</h5>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>CotizaciónId:</strong> @cotizacion.CotizacionId</li>
+                                <li><strong>Fecha:</strong> @(cotizacion.Fecha.HasValue ? cotizacion.Fecha.Value.ToShortDateString() : "No disponible")</li>
+                                <li><strong>Cliente:</strong> @(clientes.FirstOrDefault(c => c.ClienteId == cotizacion.ClienteId)?.Nombres ?? "No disponible")</li>
+                                <li><strong>Observación:</strong> @cotizacion.Observacion</li>
+                                <li><strong>Monto Total:</strong> @cotizacion.Monto.ToString("C")</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border border-success p-2 mt-2">
+                    <div class="card-header text-center">
+                        <h5 class="font-weight-bold">Detalles de Cotización</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (listacotizaciondetalle != null && listacotizaciondetalle.Any())
+                        {
+                            <div class="table-responsive mt-3">
+                                <table class="table table-bordered text-center">
+                                    <thead class="bg-primary text-white">
+                                        <tr>
+                                            <th>Artículo</th>
+                                            <th>Cantidad</th>
+                                            <th>Precio</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var detalle in listacotizaciondetalle)
+                                        {
+                                            var articulo = listaarticulo.FirstOrDefault(a => a.ArticuloId == detalle.ArticuloId);
+                                            <tr>
+                                                <td>@(articulo?.Descripcion ?? "Artículo no encontrado")</td>
+                                                <td>@detalle.Cantidad</td>
+                                                <td>@detalle.Precio.ToString("C")</td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                    </div>
+                </div>
+
+                <div class="card-footer text-center">
+                    <a href="/Cotizacion/Index" class="btn btn-outline-primary mx-2">
+                        <span class="bi bi-box-arrow-left"></span> Retroceder
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int CotizacionId { get; set; }
+    public Cotizaciones cotizacion { get; set; } = new Cotizaciones();
+    public List<Clientes> clientes = new List<Clientes>();
+    public List<Articulos> listaarticulo = new List<Articulos>();
+    public List<CotizacionesDetalle> listacotizaciondetalle { get; set; } = new List<CotizacionesDetalle>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Cargar información de la cotización
+        cotizacion = await cotizacionService.ObtenerCotizacionesPorId(CotizacionId);
+        if (cotizacion != null)
+        {
+            listacotizaciondetalle = cotizacion.cotizacionesDetalles?.ToList() ?? new List<CotizacionesDetalle>();
+            clientes = await clienteService.ListarClientes();
+            listaarticulo = await articuloService.ListarArticulos();
+        }
+    }
+}
