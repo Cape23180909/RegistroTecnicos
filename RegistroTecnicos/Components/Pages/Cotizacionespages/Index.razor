@@ -3,19 +3,19 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Consulta de Cotizaciones</PageTitle>
+<PageTitle>Consulta de Cotizaci&oacute;nes</PageTitle>
 
 <div class="container">
     <div class="card shadow-lg ">
         <div class="card-header space-between">
-            <h5 class="card-title">Consulta de cotizaciones</h5>
+            <h5 class="card-title">Consulta de cotizaci&oacute;nes</h5>
         </div>
 
         <div class="row mb-3 align-items-end">
             <div class="col md-3">
                 <label for="Filtro" class="form-label">Filtrar por:</label>
                 <select @bind="filtro" class="form-select">
-                    <option value="ID">CotizacionId</option>
+                    <option value="ID">Cotizaci&oacute;nId</option>
                     <option value="Fecha">Fecha</option>
                     <option value="Cliente">Cliente</option>
                 </select>
@@ -32,14 +32,14 @@
             </div>
 
             <div class="col md-3 text-end">
-                <a href="" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+                <a href="/Cotizacion/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
             </div>
         </div>
 
         <table class="table table-bordered text-center">
             <thead class="border-primary text-white">
                 <tr>
-                    <th>CotizacionId</th>
+                    <th>Cotizaci&oacute;nId</th>
                     <th>Fecha</th>
                     <th>ClienteId</th>
                     <th>Observacion</th>
@@ -54,21 +54,21 @@
                 {
                     <tr>
                         <td>@cotizacion.CotizacionId</td>
-                        <td>@cotizacion.Fecha.ToString("dd-MM-yyyy")</td>
-                        <td>@cotizacion.ClienteId</td>
+                        <td>@(cotizacion.Fecha.HasValue ? cotizacion.Fecha.Value.ToString("dd-MM-yyyy HH:mm:ss") : "")</td>
+                        <td>@cotizacion.Clientes?.Nombres</td>
                         <td>@cotizacion.Observacion</td>
                         <td>@cotizacion.Monto</td>
 
                         <td>
-                            <a href="/Trabajo/Details/@cotizacion.CotizacionId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
+                            <a href="/Cotizacion/Details/@cotizacion.CotizacionId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
                         </td>
 
                         <td>
-                            <a href="/Trabajo/Edit/@cotizacion.CotizacionId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
+                            <a href="/Cotizacion/Edit/@cotizacion.CotizacionId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
                         </td>
 
                         <td>
-                            <a href="/Trabajo/Delete/@cotizacion.CotizacionId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
+                            <a href="/Cotizacion/Delete/@cotizacion.CotizacionId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
                         </td>
                     </tr>
                 }
@@ -76,7 +76,7 @@
 
         </table>
         <div class="card-footer text-start">
-            <p>Total de cotizaciones: @Listacotizacion.Count</p>
+            <p>Total de cotizaci&oacute;nes: @Listacotizacion.Count</p>
         </div>
     </div>
 </div>
@@ -117,7 +117,7 @@
             {
                 if (DateTime.TryParse(valorFiltro, out DateTime fechaFiltro))
                 {
-                    Listacotizacion = await cotizacionService.Listar(c => c.Fecha.Date == fechaFiltro.Date);
+                    Listacotizacion = await cotizacionService.Listar(c => c.Fecha == fechaFiltro.Date);
                 }
                 else
                 {
