@@ -95,6 +95,62 @@ namespace RegistroTecnicos.Migrations
                     b.ToTable("Clientes");
                 });
 
+            modelBuilder.Entity("RegistroTecnicos.Models.Cotizaciones", b =>
+                {
+                    b.Property<int>("CotizacionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CotizacionId"));
+
+                    b.Property<int?>("ClienteId")
+                        .IsRequired()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("Monto")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Observacion")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("CotizacionId");
+
+                    b.ToTable("Cotizaciones");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.CotizacionesDetalle", b =>
+                {
+                    b.Property<int>("DetalleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DetalleId"));
+
+                    b.Property<int>("ArticuloId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Cantidad")
+                        .HasColumnType("int");
+
+                    b.Property<int>("CotizacionId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("Precio")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("DetalleId");
+
+                    b.HasIndex("ArticuloId");
+
+                    b.HasIndex("CotizacionId");
+
+                    b.ToTable("CotizacionesDetalles");
+                });
+
             modelBuilder.Entity("RegistroTecnicos.Models.Prioridades", b =>
                 {
                     b.Property<int>("PrioridadId")
@@ -233,6 +289,25 @@ namespace RegistroTecnicos.Migrations
                     b.ToTable("TrabajosDetalles");
                 });
 
+            modelBuilder.Entity("RegistroTecnicos.Models.CotizacionesDetalle", b =>
+                {
+                    b.HasOne("RegistroTecnicos.Models.Articulos", "Articulo")
+                        .WithMany()
+                        .HasForeignKey("ArticuloId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("RegistroTecnicos.Models.Cotizaciones", "Cotizacion")
+                        .WithMany("cotizacionesDetalles")
+                        .HasForeignKey("CotizacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Articulo");
+
+                    b.Navigation("Cotizacion");
+                });
+
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
                 {
                     b.HasOne("RegistroTecnicos.Models.TiposTecnicos", "TiposTecnicosId")
@@ -286,6 +361,11 @@ namespace RegistroTecnicos.Migrations
                     b.Navigation("Articulo");
 
                     b.Navigation("Trabajo");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.Cotizaciones", b =>
+                {
+                    b.Navigation("cotizacionesDetalles");
                 });
 
             modelBuilder.Entity("RegistroTecnicos.Models.Tecnicos", b =>
