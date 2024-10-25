@@ -27,7 +27,7 @@ namespace RegistroTecnicos
             builder.Services.AddScoped<ArticuloService>();
             builder.Services.AddScoped<CotizacionService>();
 
-          var app = builder.Build();
+            var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())

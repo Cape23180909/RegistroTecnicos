@@ -8,12 +8,6 @@ namespace RegistroTecnicos.Services;
 
 public class PrioridadService(IDbContextFactory<Contexto> DbFactory)
 {
-    private readonly Contexto _contexto;
-
-    public PrioridadService(Contexto contexto)
-    {
-        _contexto = contexto;
-    }
     //Metodo el cual Nos Identifica si esa prioridad si ya esta registrada en la base de datos
     public async Task<bool> ExistePrioridad(string descripcion, int id)
     {

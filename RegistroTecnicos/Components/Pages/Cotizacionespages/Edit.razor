@@ -214,7 +214,7 @@
         var guardado = await cotizacionService.Guardar(cotizacion);
         if (guardado)
         {
-            toastService.Notify(new(ToastType.Success, "Éxito", "El trabajo se ha guardado correctamente."));
+            toastService.Notify(new(ToastType.Success, "Éxito", "El trabajo se ha modificado correctamente."));
             Nuevo();
             Retroceder();
         }
