@@ -2,8 +2,8 @@
 
 namespace RegistroTecnicos.Models;
 
-    public class Prioridades
-    {
+public class Prioridades
+{
     [Key]
     public int PrioridadId { get; set; }
     [Required (ErrorMessage = "Llenar este campo por favor.")]
