@@ -26,7 +26,7 @@
             </div>
 
             <div class="col-md-6">
-                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
+                <label for="ValorFiltro" class="form-label">B&uacute;squeda:</label>
                 <div class="input-group">
                     <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
                     <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
@@ -43,11 +43,11 @@
         <div class="row mb-3">
             <div class="col-md-3">
                 <label for="Desde" class="form-label">Desde:</label>
-                <InputDate @bind-Value="Desde" class="form-control" />
+                <InputDate @bind-Value="Desde" class="form-control" Culture="es-ES" />
             </div>
             <div class="col-md-3">
                 <label for="Hasta" class="form-label">Hasta:</label>
-                <InputDate @bind-Value="Hasta" class="form-control" />
+                <InputDate @bind-Value="Hasta" class="form-control" Culture="es-ES" />
             </div>
         </div>
 
@@ -58,7 +58,7 @@
                     <th>Cotizaci&oacute;nId</th>
                     <th>Fecha</th>
                     <th>ClienteId</th>
-                    <th>Observacion</th>
+                    <th>Observaci&oacute;n</th>
                     <th>Monto</th>
                     <th>Ver</th>
                     <th>Modificar</th>
@@ -70,7 +70,7 @@
                 {
                     <tr>
                         <td>@cotizacion.CotizacionId</td>
-                        <td>@(cotizacion.Fecha.HasValue ? cotizacion.Fecha.Value.ToString("dd-MM-yyyy HH:mm:ss") : "")</td>
+                        <td>@(cotizacion.Fecha.HasValue ? cotizacion.Fecha.Value.ToString("dd/MM/yyyy") : "")</td>
                         <td>@cotizacion.Clientes?.Nombres</td>
                         <td>@cotizacion.Observacion</td>
                         <td>@cotizacion.Monto</td>
@@ -132,21 +132,10 @@
             }
             else if (filtro == "Fecha")
             {
-                if (Desde.HasValue && Hasta.HasValue)
-                {
-                    Listacotizacion = await cotizacionService.Listar(c =>
-                        c.Fecha.HasValue && c.Fecha.Value >= Desde && c.Fecha.Value <= Hasta);
-                }
-                else if (Desde.HasValue)
-                {
-                    Listacotizacion = await cotizacionService.Listar(c =>
-                        c.Fecha.HasValue && c.Fecha.Value >= Desde);
-                }
-                else if (Hasta.HasValue)
-                {
-                    Listacotizacion = await cotizacionService.Listar(c =>
-                        c.Fecha.HasValue && c.Fecha.Value <= Hasta);
-                }
+                Listacotizacion = await cotizacionService.Listar(c =>
+                    c.Fecha.HasValue &&
+                    (!Desde.HasValue || c.Fecha.Value >= Desde) &&
+                    (!Hasta.HasValue || c.Fecha.Value <= Hasta));
             }
         }
     }
