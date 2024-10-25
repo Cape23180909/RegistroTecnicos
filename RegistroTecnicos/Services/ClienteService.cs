@@ -3,7 +3,6 @@ using RegistroTecnicos.DAL;
 using RegistroTecnicos.Models;
 using System;
 using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
 
 namespace RegistroTecnicos.Services;
 
@@ -80,4 +79,21 @@ public class ClienteService(IDbContextFactory<Contexto> DbFactory)
             .AsNoTracking()
             .ToListAsync();
     }
+
+    public async Task<Clientes> BuscarPorNombre(string nombre)
+    {
+        await using var contexto = await DbFactory.CreateDbContextAsync();
+        if (string.IsNullOrWhiteSpace(nombre))
+        {
+            return null;
+        }
+
+        // Busca el cliente por nombre utilizando ToLower para hacer una comparación sin distinción de mayúsculas y minúsculas
+        var cliente = await contexto.Clientes
+            .FirstOrDefaultAsync(c => c.Nombres.ToLower() == nombre.ToLower());
+
+        return cliente;
+    }
+
+
 }
