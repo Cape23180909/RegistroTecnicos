@@ -1,5 +1,6 @@
 ﻿@page "/Cotizacion/Index"
 @inject CotizacionService cotizacionService
+@inject ClienteService clienteService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -108,21 +109,39 @@
                 Listacotizacion = await cotizacionService.Listar(c => c.CotizacionId == trabajoId);
             }
 
-            else if (filtro == "Cliente" && int.TryParse(valorFiltro, out int clienteId))
+            else if (filtro == "Cliente")
             {
-                Listacotizacion = await cotizacionService.Listar(c => c.ClienteId == clienteId);
-            }
+                // Suponiendo que tienes un servicio para buscar clientes por su nombre
+                var cliente = await clienteService.BuscarPorNombre(valorFiltro);
 
+                if (cliente != null)
+                {
+                    // Si se encontró el cliente, filtra por su ID
+                    Listacotizacion = await cotizacionService.Listar(c => c.ClienteId == cliente.ClienteId);
+                }
+                else
+                {
+                    // Si no se encontró el cliente, puedes asignar una lista vacía o manejarlo de otra manera
+                    Listacotizacion = new List<Cotizaciones>();
+                }
+            }
             else if (filtro == "Fecha")
             {
                 if (DateTime.TryParse(valorFiltro, out DateTime fechaFiltro))
                 {
-                    Listacotizacion = await cotizacionService.Listar(c => c.Fecha == fechaFiltro.Date);
+                    Console.WriteLine($"Fecha ingresada: {fechaFiltro}");
+
+                    var fechaInicio = fechaFiltro.Date;
+                    var fechaFin = fechaInicio.AddDays(1);
+
+                    Listacotizacion = await cotizacionService.Listar(c =>
+                        c.Fecha.HasValue &&
+                        c.Fecha.Value >= fechaInicio &&
+                        c.Fecha.Value < fechaFin);
+
+                    Console.WriteLine($"Filtrando cotizaciones entre {fechaInicio} y {fechaFin}");
                 }
-                else
-                {
-                    Listacotizacion = new List<Cotizaciones>();
-                }
+
             }
 
         }
