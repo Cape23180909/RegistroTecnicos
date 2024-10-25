@@ -156,19 +156,29 @@
 
     private async Task AgregarDetalle()
     {
+        // Verifica si se seleccionó un artículo válido
+        if (selectedArticuloId == 0)
+        {
+            toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe seleccionar un artículo."));
+            return;
+        }
+
+        // Verifica si la cantidad es válida
+        if (cotizacionDetalle.Cantidad <= 0)
+        {
+            toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe ingresar una cantidad válida."));
+            return;
+        }
+
+        // Verifica la existencia del artículo
         var articuloSeleccionado = listaarticulo.FirstOrDefault(a => a.ArticuloId == selectedArticuloId);
-        if (articuloSeleccionado == null || cotizacionDetalle.Cantidad <= 0)
+        if (articuloSeleccionado == null || articuloSeleccionado.Existencia < cotizacionDetalle.Cantidad)
         {
-            toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe seleccionar un artículo y una cantidad válida."));
+            toastService.Notify(new(ToastType.Warning, "Advertencia", "No hay suficiente existencia del artículo."));
             return;
         }
 
-        if (articuloSeleccionado.Existencia < cotizacionDetalle.Cantidad)
-        {
-            toastService.Notify(new(ToastType.Warning, "Advertencia", "No hay suficiente existencia del artículo para completar la operación manin."));
-            return;
-        }
-
+        // Agrega el detalle
         cotizacionDetalle.Precio = articuloSeleccionado.Precio;
         var nuevoDetalle = new CotizacionesDetalle
             {
@@ -176,6 +186,7 @@
                 Cantidad = cotizacionDetalle.Cantidad,
                 Precio = articuloSeleccionado.Precio
             };
+
         listacotizaciondetalle.Add(nuevoDetalle);
         cotizacionDetalle = new CotizacionesDetalle();
         selectedArticuloId = 0;
@@ -198,12 +209,20 @@
 
     private async Task Guardar()
     {
+        // Verifica si se ha agregado al menos un detalle
+        if (listacotizaciondetalle == null || !listacotizaciondetalle.Any())
+        {
+            toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe agregar al menos un detalle antes de guardar."));
+            return;
+        }
+
+        // Asigna los detalles y guarda la cotización
         cotizacion.cotizacionesDetalles = listacotizaciondetalle;
         var guardado = await cotizacionService.Guardar(cotizacion);
         if (guardado)
         {
-            toastService.Notify(new(ToastType.Success, "Éxito", "El trabajo se ha guardado correctamente."));
-            Nuevo();
+            toastService.Notify(new(ToastType.Success, "Éxito", "La cotización se ha guardado correctamente."));
+            await Nuevo();
             Retroceder();
         }
     }
