@@ -7,13 +7,16 @@
 <PageTitle>Consulta de Cotizaci&oacute;nes</PageTitle>
 
 <div class="container">
-    <div class="card shadow-lg ">
-        <div class="card-header space-between">
+    <div class="card shadow-lg">
+        <div class="card-header d-flex justify-content-between">
             <h5 class="card-title">Consulta de cotizaci&oacute;nes</h5>
+            <a href="/Cotizacion/Create" class="btn btn-primary">
+                <span class="bi bi-plus-square mt-3"></span> Crear
+            </a>
         </div>
 
         <div class="row mb-3 align-items-end">
-            <div class="col md-3">
+            <div class="col-md-3">
                 <label for="Filtro" class="form-label">Filtrar por:</label>
                 <select @bind="filtro" class="form-select">
                     <option value="ID">Cotizaci&oacute;nId</option>
@@ -22,21 +25,33 @@
                 </select>
             </div>
 
-            <div class="col md-6">
-                <label for="ValorFiltro" class="form-label">Busqueda:</label>
+            <div class="col-md-6">
+                <label for="ValorFiltro" class="form-label">Búsqueda:</label>
                 <div class="input-group">
                     <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
-                    <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
-                        <span class="bi bi-search"></span>Buscar
+                    <button @onclick="Buscar" class="btn btn-outline-primary" type="button">
+                        <span class="bi bi-search"></span> Buscar
+                    </button>
+                    <button @onclick="Restablecer" class="btn btn-outline-secondary" type="button">
+                        <span class="bi bi-arrow-clockwise"></span> Restablecer
                     </button>
                 </div>
             </div>
+        </div>
 
-            <div class="col md-3 text-end">
-                <a href="/Cotizacion/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+        <!-- Campos de fecha Desde y Hasta -->
+        <div class="row mb-3">
+            <div class="col-md-3">
+                <label for="Desde" class="form-label">Desde:</label>
+                <InputDate @bind-Value="Desde" class="form-control" />
+            </div>
+            <div class="col-md-3">
+                <label for="Hasta" class="form-label">Hasta:</label>
+                <InputDate @bind-Value="Hasta" class="form-control" />
             </div>
         </div>
 
+        <!-- Tabla de cotizaciones -->
         <table class="table table-bordered text-center">
             <thead class="border-primary text-white">
                 <tr>
@@ -74,8 +89,8 @@
                     </tr>
                 }
             </tbody>
-
         </table>
+
         <div class="card-footer text-start">
             <p>Total de cotizaci&oacute;nes: @Listacotizacion.Count</p>
         </div>
@@ -86,9 +101,10 @@
     public Cotizaciones cotizacion { get; set; } = new Cotizaciones();
     public Clientes cliente { get; set; } = new Clientes();
     public List<Cotizaciones> Listacotizacion { get; set; } = new List<Cotizaciones>();
-    public List<Clientes> listacliente { get; set; } = new List<Clientes>();
     public string filtro = "ID";
     public string valorFiltro = "";
+    public DateTime? Desde { get; set; }
+    public DateTime? Hasta { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -97,53 +113,50 @@
 
     public async Task Buscar()
     {
-        if (string.IsNullOrWhiteSpace(valorFiltro))
+        if (string.IsNullOrWhiteSpace(valorFiltro) && !Desde.HasValue && !Hasta.HasValue)
         {
-
             Listacotizacion = await cotizacionService.Listar(t => true);
         }
         else
         {
-            if (filtro == "ID" && int.TryParse(valorFiltro, out int trabajoId))
+            if (filtro == "ID" && int.TryParse(valorFiltro, out int cotizacionId))
             {
-                Listacotizacion = await cotizacionService.Listar(c => c.CotizacionId == trabajoId);
+                Listacotizacion = await cotizacionService.Listar(c => c.CotizacionId == cotizacionId);
             }
-
             else if (filtro == "Cliente")
             {
-                // Suponiendo que tienes un servicio para buscar clientes por su nombre
                 var cliente = await clienteService.BuscarPorNombre(valorFiltro);
-
-                if (cliente != null)
-                {
-                    // Si se encontró el cliente, filtra por su ID
-                    Listacotizacion = await cotizacionService.Listar(c => c.ClienteId == cliente.ClienteId);
-                }
-                else
-                {
-                    // Si no se encontró el cliente, puedes asignar una lista vacía o manejarlo de otra manera
-                    Listacotizacion = new List<Cotizaciones>();
-                }
+                Listacotizacion = cliente != null
+                    ? await cotizacionService.Listar(c => c.ClienteId == cliente.ClienteId)
+                    : new List<Cotizaciones>();
             }
             else if (filtro == "Fecha")
             {
-                if (DateTime.TryParse(valorFiltro, out DateTime fechaFiltro))
+                if (Desde.HasValue && Hasta.HasValue)
                 {
-                    Console.WriteLine($"Fecha ingresada: {fechaFiltro}");
-
-                    var fechaInicio = fechaFiltro.Date;
-                    var fechaFin = fechaInicio.AddDays(1);
-
                     Listacotizacion = await cotizacionService.Listar(c =>
-                        c.Fecha.HasValue &&
-                        c.Fecha.Value >= fechaInicio &&
-                        c.Fecha.Value < fechaFin);
-
-                    Console.WriteLine($"Filtrando cotizaciones entre {fechaInicio} y {fechaFin}");
+                        c.Fecha.HasValue && c.Fecha.Value >= Desde && c.Fecha.Value <= Hasta);
                 }
-
+                else if (Desde.HasValue)
+                {
+                    Listacotizacion = await cotizacionService.Listar(c =>
+                        c.Fecha.HasValue && c.Fecha.Value >= Desde);
+                }
+                else if (Hasta.HasValue)
+                {
+                    Listacotizacion = await cotizacionService.Listar(c =>
+                        c.Fecha.HasValue && c.Fecha.Value <= Hasta);
+                }
             }
-
         }
+    }
+
+    public async Task Restablecer()
+    {
+        filtro = "ID";
+        valorFiltro = "";
+        Desde = null;
+        Hasta = null;
+        Listacotizacion = await cotizacionService.Listar(c => true);
     }
 }
