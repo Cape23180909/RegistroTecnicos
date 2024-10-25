@@ -1,0 +1,46 @@
+﻿@page "/Prioridad/Details/{PrioridadId:int}"
+@inject PrioridadService prioridadService
+@inject NavigationManager navigationManager
+@rendermode InteractiveServer
+
+<PageTitle>Detalles</PageTitle>
+
+@if (prioridad != null)
+{
+    <div class="container">
+        <div class="card shadow-header">
+            <div class="card-header bg-primary text-center text-white py-2 rounded">
+                <h3 style="font-weight: bold;" class="font-weight-bold">Detalles de la prioridad</h3>
+            </div>
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card-body">
+                            <ul class="list-unstyled">
+                                <li><strong>PrioridadId:</strong>@prioridad.PrioridadId</li>
+                                <li><strong>Descripci&oacute;n:</strong>@prioridad.Descripcion</li>
+                                <li><strong>Tiempo:</strong>@prioridad.Tiempo</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer d-inline-block">
+            <a href="/Prioridad/Index" class="btn btn-outline-primary">
+                <span class="bi bi-box-arrow-left"></span> Retroceder
+            </a>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int PrioridadId { get; set; }
+    public Prioridades? prioridad { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        prioridad = await prioridadService.Buscar(PrioridadId);
+    }
+}

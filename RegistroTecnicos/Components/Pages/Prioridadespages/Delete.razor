@@ -1,19 +1,19 @@
-﻿@page "/Cliente/Delete/{ClienteId:int}"
-@inject ClienteService clienteService
+﻿@page "/Prioridad/Delete/{PrioridadId:int}"
+@inject PrioridadService prioridadService
 @inject NavigationManager navigationManager
 @inject ToastService toastService
 @rendermode InteractiveServer
 
-<PageTitle>Eliminar Técnico</PageTitle>
+<PageTitle>Eliminar Prioridad</PageTitle>
 
 <div class="container">
     <div class="card shadow-header">
         <div class="card-header bg-primary text-white text-center py-2 rounded">
-            <h3><strong>Eliminar Cliente</strong></h3>
+            <h3><strong>Eliminar prioridad</strong></h3>
         </div>
 
         <div class="card-header text-center">
-            <h3 class="text-danger">¿Estás seguro de que quieres eliminar este cliente?</h3>
+            <h3 class="text-danger">¿Estás seguro de que quieres eliminar esta prioridad?</h3>
         </div>
 
         <div class="container ">
@@ -21,7 +21,7 @@
                 <div class="col-md-6">
                     <div class="card shadow-lg ">
                         <div class="card-header ">
-                            <h3 class="text-center "><strong>Datos del cliente:</strong></h3>
+                            <h3 class="text-center "><strong>Datos de la prioridad:</strong></h3>
                         </div>
                         <div class="card-body">
                             <div class="border-primary border-2 borde">
@@ -29,9 +29,9 @@
                                     <div class="row">
                                         <div class="col-md-8">
                                             <ul class="list-unstyled ">
-                                                <li><strong>ClienteId:</strong> @clientes.ClienteId</li>
-                                                <li><strong>Nombres:</strong> @clientes.Nombres</li>
-                                                <li><strong>WhatsApp:</strong>@clientes.WhatsApp</li>
+                                                <li><strong>PrioridadId:</strong>@prioridad.PrioridadId</li>
+                                                <li><strong>Descripci&oacute;n:</strong>@prioridad.Descripcion</li>
+                                                <li><strong>Tiempo:</strong>@prioridad.Tiempo</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -44,55 +44,49 @@
         </div>
 
         <div class="card-footer text-center">
-            <button type="button" class="btn btn-outline-danger" @onclick="EliminarCliente"><i class="bi bi-trash-fill"></i> Eliminar</button>
+            <button type="button" class="btn btn-outline-danger" @onclick="EliminarPrioridad"><i class="bi bi-trash-fill"></i> Eliminar</button>
             <button type="button" class="btn btn-outline-primary" @onclick="Retroceder"><i class="bi bi-box-arrow-left"></i> Retroceder</button>
         </div>
     </div>
 </div>
 
-@if (clientes == null)
-{
-    <p>Técnico no encontrado.</p>
-}
-
 @code {
     [Parameter]
-    public int ClienteId { get; set; }
-    public Clientes? clientes { get; set; } = new Clientes();
-    public string tipoDescripcion { get; set; }
+    public int PrioridadId { get; set; }
+    public Prioridades? prioridad { get; set; } = new Prioridades();
     private bool existe = false;
 
     protected override async Task OnInitializedAsync()
     {
-        if (ClienteId != 0)
+        if (PrioridadId != 0)
         {
-            clientes = await clienteService.Buscar(ClienteId);
-            if (clientes != null)
+            prioridad = await prioridadService.Buscar(PrioridadId);
+            if (prioridad != null)
             {
-                var tipo = await clienteService.Buscar(ClienteId);
+                var tipo = await prioridadService.Buscar(PrioridadId);
             }
         }
     }
 
-    public async Task EliminarCliente()
+    public async Task EliminarPrioridad()
     {
-        if (ClienteId == 0 || clientes == null)
+        if (PrioridadId == 0 || prioridad == null)
         {
             return;
         }
-        if (await clienteService.Eliminar(ClienteId))
+        if (await prioridadService.Eliminar(PrioridadId))
         {
             toastService.Notify(new(ToastType.Success,
             iconName: IconName.None,
             title: "Validacion",
             helpText: "",
-            message: "El cliente se a eliminado correctamente."));
+            message: "La prioridad se a eliminado correctamente."));
             Retroceder();
         }
     }
 
     public async Task Retroceder()
     {
-        navigationManager.NavigateTo("/Cliente/Index");
+        navigationManager.NavigateTo("/Prioridad/Index");
     }
 }

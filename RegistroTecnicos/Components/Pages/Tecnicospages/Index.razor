@@ -1,5 +1,6 @@
 ﻿@page "/Tecnico/Index"
 @inject TecnicoService tecnicoService
+@inject TipoTecnicoService tipotecnicoService
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
@@ -9,56 +10,105 @@
     <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de T&eacute;cnicos</h3>
 </div>
 
-<div class="col md-3 text-end">
-    <a href="/Tecnico/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
-</div>
+<div class="row mb-3 align-items-end">
+    <div class="col md-3">
+        <label for="Filtro" class="form-label">Filtrar por:</label>
+        <select @bind="filtro" class="form-select">
+            <option value="ID">TecnicoId</option>
+            <option value="Nombres">Nombres</option>
+            <option value="TipoTecnico">TipoTecnico</option>
+        </select>
+    </div>
 
-<table class="table table-bordered  text-center">
-    <thead class="border-primary text-white">
-        <tr>
-            <th>T&eacute;cnicoId</th>
-            <th>Nombres</th>
-            <th>TipoT&eacute;cnico</th>
-            <th>SueldoHora</th>
-            <th>Ver</th>
-            <th>Editar</th>
-            <th>Eliminar</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var tecnicos in ListaTecnicos)
-        {
+    <div class="col md-6">
+        <label for="ValorFiltro" class="form-label">Busqueda:</label>
+        <div class="input-group">
+            <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+            <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
+                <span class="bi bi-search"></span>Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="col md-3 text-end">
+        <a href="/Tecnico/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+    </div>
+    </div>
+
+    <table class="table table-bordered  text-center">
+        <thead class="border-primary text-white">
             <tr>
-                <td>@tecnicos.TecnicoId</td>
-                <td>@tecnicos.Nombres</td>
-                <td>@tecnicos.TiposTecnicosId?.Descripcion</td>
-                <td>@tecnicos.Sueldohora</td>
-
-                <td>
-                    <a href="/Tecnico/Details/@tecnicos.TecnicoId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
-                </td>
-
-                <td>
-                    <a href="/Tecnico/Edit/@tecnicos.TecnicoId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
-                </td>
-
-                <td>
-                    <a href="/Tecnico/Delete/@tecnicos.TecnicoId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
-                </td>
+                <th>T&eacute;cnicoId</th>
+                <th>Nombres</th>
+                <th>TipoT&eacute;cnico</th>
+                <th>SueldoHora</th>
+                <th>Ver</th>
+                <th>Editar</th>
+                <th>Eliminar</th>
             </tr>
+        </thead>
+        <tbody>
+            @foreach (var tecnicos in ListaTecnicos)
+            {
+                <tr>
+                    <td>@tecnicos.TecnicoId</td>
+                    <td>@tecnicos.Nombres</td>
+                    <td>@tecnicos.TiposTecnicosId?.Descripcion</td>
+                    <td>@tecnicos.Sueldohora</td>
+
+                    <td>
+                        <a href="/Tecnico/Details/@tecnicos.TecnicoId" class="btn btn-outline-primary"><span class="bi bi-info-circle-fill"></span></a>
+                    </td>
+
+                    <td>
+                        <a href="/Tecnico/Edit/@tecnicos.TecnicoId" class="btn btn-outline-success"><span class="bi bi-marker-tip"></span></a>
+                    </td>
+
+                    <td>
+                        <a href="/Tecnico/Delete/@tecnicos.TecnicoId" class="btn btn-outline-warning"><span class="bi bi-dash-circle-fill"></span></a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <div class="card-footer text-start">
+        <p>Total de T&eacute;cnicos: @ListaTecnicos.Count</p>
+    </div>
+
+    @code {
+        public Tecnicos tecnicos { get; set; } = new Tecnicos();
+        public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
+        public string filtro = "ID";
+        public string valorFiltro = "";
+
+        protected override async Task OnInitializedAsync()
+        {
+            ListaTecnicos = await tecnicoService.Listar(t => true);
         }
-    </tbody>
-</table>
-<div class="card-footer text-start">
-    <p>Total de T&eacute;cnicos: @ListaTecnicos.Count</p>
-</div>
 
-@code {
-    public Tecnicos tecnicos { get; set; } = new Tecnicos();
-    public List<Tecnicos> ListaTecnicos { get; set; } = new List<Tecnicos>();
-
-    protected override async Task OnInitializedAsync()
-    {
-        ListaTecnicos = await tecnicoService.Listar(t => true);
-    }
-}
+        public async Task Buscar()
+        {
+            if (string.IsNullOrWhiteSpace(valorFiltro))
+            {
+                ListaTecnicos = await tecnicoService.Listar(P => true);
+            }
+            else
+            {
+                if (filtro == "ID" && int.TryParse(valorFiltro, out int tecnicoId))
+                {
+                    ListaTecnicos = await tecnicoService.Listar(t => t.TecnicoId == tecnicoId);
+                }
+                else if (filtro == "Nombres")
+                {
+                    ListaTecnicos = await tecnicoService.Listar(t => t.Nombres.Contains(valorFiltro));
+                }
+                else if (filtro == "TipoTecnico")
+                {
+                
+                var tiposTecnicos = await tipotecnicoService.Listar(t => t.Descripcion.Contains(valorFiltro));
+                var tipoTecnicoIds = tiposTecnicos.Select(t => t.TipoTecnicoId).ToList();
+                ListaTecnicos = await tecnicoService.Listar(t => tipoTecnicoIds.Contains(t.TipoTecnicoId));
+            }
+                }
+            }
+        }

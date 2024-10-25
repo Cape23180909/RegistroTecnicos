@@ -1,0 +1,105 @@
+﻿@page "/Prioridad/Edit/{PrioridadId:int}"
+@inject PrioridadService prioridadService
+@inject NavigationManager navigationManager
+@inject ToastService toastService
+@rendermode InteractiveServer
+
+<EditForm Model="prioridad" OnValidSubmit="Guardar">
+    <DataAnnotationsValidator />
+
+    <div class="card-header bg-primary text-center text-white py-2 rounded">
+        <h3 style="font-weight: bold;" class="font-weight-bold">Editar Prioridad</h3>
+    </div>
+
+    <div class="card-body">
+
+        @*PrioridadId*@
+        <div class="mb-3">
+            <label for="PrioridadId" class="form-label">PrioridadId:</label>
+            <InputNumber @bind-Value="prioridad.PrioridadId" class="form-select" />
+        </div>
+
+        @*Descripcion*@
+        <div class="mb-3">
+            <label for="Descripcion" class="form-label">Descripci&oacute;n:</label>
+            <InputText @bind-Value="prioridad.Descripcion" class="form-select" />
+            <ValidationMessage For="@(() => prioridad.Descripcion)" />
+        </div>
+
+        @*Tiempo*@
+        <div class="mb-3">
+            <label for="Tiempo" class="form-label">Tiempo:</label>
+            <InputText @bind-Value="prioridad.Tiempo" class="form-select" />
+            <ValidationMessage For="@(() => prioridad.Tiempo)" />
+        </div>
+    </div>
+
+    <div class="card-footer d-flex justify-content-lg-center text-center">
+        <button type="button" class="btn btn-outline-primary ml-2" @onclick="Nuevo"><span class="bi bi-plus"></span>Nuevo</button>
+        <button type="submit" class="btn btn-outline-success ml-2"><span class="bi bi-check-circle-fill"></span>Guardar</button>
+        <button type="button" class="btn btn-outline-danger" @onclick="Retroceder"><span class="bi bi-arrow-bar-left"></span>Retroceder</button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int PrioridadId { get; set; }
+    public Prioridades? prioridad { get; set; } = new Prioridades();
+    private bool existe = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        prioridad = await prioridadService.Buscar(PrioridadId);
+    }
+
+    public async Task Nuevo()
+    {
+        prioridad = new Prioridades();
+        existe = false;
+    }
+    public async Task Buscar()
+    {
+        existe = false;
+        var encontrado = await prioridadService.Buscar(prioridad.PrioridadId);
+        if (encontrado != null)
+        {
+            prioridad = encontrado;
+        }
+        else
+        {
+            Nuevo();
+        }
+    }
+    public async Task<bool> Validar()
+    {
+        var ListarPrioridad = await prioridadService.Listar(a => a.Descripcion.ToLower() == prioridad.Descripcion.ToLower() && prioridad.PrioridadId != PrioridadId);
+        return ListarPrioridad.Count == 0;
+    }
+    public async Task Guardar()
+    {
+        if (!await Validar())
+        {
+            toastService.Notify(new(ToastType.Success,
+            iconName: IconName.None,
+            title: "Validacion",
+            helpText: "",
+            message: "Ya Existe una prioridad con ese nombre."));
+            return;
+        }
+        var guardado = await prioridadService.Guardar(prioridad);
+        if (guardado)
+        {
+            toastService.Notify(new(ToastType.Success,
+        iconName: IconName.None,
+        title: "Validacion",
+        helpText: "",
+        message: "La prioridad se a Modificado correctamente."));
+            Nuevo();
+            Retroceder();
+        }
+    }
+    public async Task Retroceder()
+    {
+        navigationManager.NavigateTo("/Prioridad/Index");
+    }
+}

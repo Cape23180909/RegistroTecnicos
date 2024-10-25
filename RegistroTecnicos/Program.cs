@@ -14,8 +14,8 @@ namespace RegistroTecnicos
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
 
-            var ConStr = builder.Configuration.GetConnectionString("ConStr");
-            builder.Services.AddDbContext<Contexto>(options => options.UseSqlite(ConStr));
+            var ConStr = builder.Configuration.GetConnectionString("SqlConStr");
+            builder.Services.AddDbContextFactory<Contexto>(o => o.UseSqlServer(ConStr));
             //Iconos de Bootstrap
             builder.Services.AddBlazorBootstrap();
             //Injectamos el Service
@@ -24,6 +24,8 @@ namespace RegistroTecnicos
             builder.Services.AddScoped<ClienteService>();
             builder.Services.AddScoped<TrabajoService>();
             builder.Services.AddScoped<PrioridadService>();
+            builder.Services.AddScoped<ArticuloService>();
+            builder.Services.AddScoped<CotizacionService>();
 
           var app = builder.Build();
 

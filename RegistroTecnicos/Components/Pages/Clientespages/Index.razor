@@ -9,8 +9,29 @@
     <h3 style="font-weight: bold;" class="font-weight-bold">Consulta de Clientes</h3>
 </div>
 
-<div class="col md-3 text-end">
-    <a href="/Cliente/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+<div class="row mb-3 align-items-end">
+    <div class="col md-3">
+        <label for="Filtro" class="form-label">Filtrar por:</label>
+        <select @bind="filtro" class="form-select">
+            <option value="ID">ClienteId</option>
+            <option value="Nombres">Nombres</option>
+            <option value="WhatsApp">WhatsApp</option>
+        </select>
+    </div>
+
+    <div class="col md-6">
+        <label for="ValorFiltro" class="form-label">Busqueda:</label>
+        <div class="input-group">
+            <input @bind="valorFiltro" class="form-control" placeholder="Buscar" />
+            <button @onclick="Buscar" class=" btn btn-outline-primary" type="button">
+                <span class="bi bi-search"></span>Buscar
+            </button>
+        </div>
+    </div>
+
+    <div class="col md-3 text-end">
+        <a href="/Cliente/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
+    </div>
 </div>
 
 <table class="table table-bordered text-center">
@@ -25,7 +46,7 @@
         </tr>
     </thead>
     <tbody>
-        @foreach(var clientes in ListaClientes)
+        @foreach (var clientes in ListaClientes)
         {
             <tr>
                 <td>@clientes.ClienteId</td>
@@ -55,9 +76,35 @@
 @code {
     public Clientes clientes { get; set; } = new Clientes();
     public List<Clientes> ListaClientes { get; set; } = new List<Clientes>();
+    public string filtro = "ID";
+    public string valorFiltro = "";
 
     protected override async Task OnInitializedAsync()
     {
         ListaClientes = await clienteService.Listar(c => true);
+    }
+
+    public async Task Buscar()
+    {
+        if (string.IsNullOrWhiteSpace(valorFiltro))
+        {
+            ListaClientes = await clienteService.Listar(P => true);
+        }
+        else
+        {
+            if (filtro == "ID" && int.TryParse(valorFiltro, out int articuloId))
+            {
+                ListaClientes = await clienteService.Listar(c => c.ClienteId == articuloId);
+            }
+            else if (filtro == "Nombres")
+            {
+                ListaClientes = await clienteService.Listar(c => c.Nombres.Contains(valorFiltro));
+            }
+            else if (filtro == "WhatsApp")
+            {
+                ListaClientes = await clienteService.Listar(c => c.WhatsApp.Contains(valorFiltro));
+            }
+
+        }
     }
 }
