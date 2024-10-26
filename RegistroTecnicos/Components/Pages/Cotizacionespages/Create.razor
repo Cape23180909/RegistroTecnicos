@@ -16,20 +16,20 @@
             </div>
 
             <div class="card-body">
-                <!-- CotizacionId -->
+                @* CotizacionId *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Cotizaci&oacute;nId:</strong></label>
                     <InputNumber @bind-Value="cotizacion.CotizacionId" class="form-control" Disabled />
                 </div>
 
-                <!-- Fecha -->
+                @* Fecha *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Fecha:</strong></label>
                     <InputDate id="Fecha" class="form-control" @bind-Value="cotizacion.Fecha" />
                     <ValidationMessage For="@(() => cotizacion.Fecha)" />
                 </div>
 
-                <!-- ClienteId -->
+                @* ClienteId *@
                 <div class="mb-3">
                     <label class="form-label"><strong>ClienteId:</strong></label>
                     <InputSelect @bind-Value="cotizacion.ClienteId" class="form-control">
@@ -42,14 +42,14 @@
                     <ValidationMessage For="@(() => cotizacion.ClienteId)" />
                 </div>
 
-                <!-- Observación -->
+                @* Observación *@
                 <div class="mb-3">
-                    <label class="form-label"><strong>Observación:</strong></label>
+                    <label class="form-label"><strong>Observaci&oacute;n:</strong></label>
                     <InputText @bind-Value="cotizacion.Observacion" class="form-control" />
                     <ValidationMessage For="@(() => cotizacion.Observacion)" />
                 </div>
 
-                <!-- Monto -->
+                @* Monto *@
                 <div class="mb-3">
                     <label class="form-label"><strong>Monto:</strong></label>
                     <InputNumber @bind-Value="cotizacion.Monto" class="form-control" Disabled />
@@ -62,7 +62,7 @@
 
                 <div class="card-body p-3">
                     <div class="row align-items-center m-0">
-                        <!-- Selección de artículo -->
+                        @* Selección de artículo *@
                         <div class="col-sm-4 p-0 text-center">
                             <InputSelect @bind-Value="selectedArticuloId" class="form-select" TValue="int">
                                 <option value="0">--Seleccione un artículo--</option>
@@ -74,7 +74,7 @@
                             <ValidationMessage For="@(() => selectedArticuloId)" />
                         </div>
 
-                        <!-- Cantidad -->
+                        @* Cantidad *@
                         <div class="col-sm-3 p-0">
                             <div class="input-group">
                                 <span class="input-group-text">Cantidad:</span>
@@ -100,7 +100,7 @@
                     </div>
                 </div>
 
-                <!-- Tabla de Detalles -->
+                @* Tabla de Detalles *@
                 <div class="table-responsive mt-3">
                     <table class="table table-light">
                         <thead class="table table-striped">
@@ -156,14 +156,14 @@
 
     private async Task AgregarDetalle()
     {
-        // Verifica si se seleccionó un artículo válido
+        // Verifica si se selecciono
         if (selectedArticuloId == 0)
         {
             toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe seleccionar un artículo."));
             return;
         }
 
-        // Verifica si la cantidad es válida
+        // Verifica si la cantidad es valida
         if (cotizacionDetalle.Cantidad <= 0)
         {
             toastService.Notify(new(ToastType.Warning, "Advertencia", "Debe ingresar una cantidad válida."));

@@ -4,7 +4,7 @@ using RegistroTecnicos.Models;
 using System.Linq.Expressions;
 
 namespace RegistroTecnicos.Services;
-public class CotizacionService (IDbContextFactory<Contexto> DbFactory)
+public class CotizacionService(IDbContextFactory<Contexto> DbFactory)
 {
     //Metodo Existe 
     public async Task<bool> Existe(int cotizacionid)
@@ -30,15 +30,12 @@ public class CotizacionService (IDbContextFactory<Contexto> DbFactory)
     public async Task<bool> Guardar(Cotizaciones cotizacion)
     {
         if (!await Existe(cotizacion.CotizacionId))
-        {
-            return await Insertar(cotizacion);
-        }
-        else
-        {
-            return await Modificar(cotizacion);
-        }
-    }
 
+            return await Insertar(cotizacion);
+        else
+            return await Modificar(cotizacion);
+
+    }
     //Metodo Eliminar
     public async Task<bool> Eliminar(int id)
     {
@@ -56,7 +53,7 @@ public class CotizacionService (IDbContextFactory<Contexto> DbFactory)
         await using var contexto = await DbFactory.CreateDbContextAsync();
         return await contexto.Cotizaciones
             .Include(c => c.CotizacionId)
-            .Include(c =>c.Clientes)
+            .Include(c => c.Clientes)
             .Include(c => c.cotizacionesDetalles)
             .FirstOrDefaultAsync(c => c.CotizacionId == cotizacionId);
     }
@@ -82,7 +79,7 @@ public class CotizacionService (IDbContextFactory<Contexto> DbFactory)
     public async Task<bool> EliminarDetalle(CotizacionesDetalle detalle)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
-        var cotizacionDetalleDb = await contexto.CotizacionesDetalles.FindAsync(detalle.DetalleId); 
+        var cotizacionDetalleDb = await contexto.CotizacionesDetalles.FindAsync(detalle.DetalleId);
         if (cotizacionDetalleDb != null)
         {
             contexto.CotizacionesDetalles.Remove(cotizacionDetalleDb);
