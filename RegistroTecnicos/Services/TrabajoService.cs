@@ -4,7 +4,7 @@ using RegistroTecnicos.Models;
 using System.Linq.Expressions;
 
 namespace RegistroTecnicos.Services;
-public class TrabajoService (IDbContextFactory<Contexto> DbFactory)
+public class TrabajoService(IDbContextFactory<Contexto> DbFactory)
 {
     //Metodo Existe
     public async Task<bool> Existe(int trabajoId)
@@ -84,7 +84,6 @@ public class TrabajoService (IDbContextFactory<Contexto> DbFactory)
             .AsNoTracking()
             .ToListAsync();
     }
-
     public async Task<List<TrabajosDetalle>> ListarDetalles(int trabajoId)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();
@@ -103,7 +102,6 @@ public class TrabajoService (IDbContextFactory<Contexto> DbFactory)
             .Where(t => t.TrabajoId == trabajoId)
             .ToListAsync();
     }
-
     public async Task<bool> EliminarDetalle(TrabajosDetalle detalle)
     {
         await using var contexto = await DbFactory.CreateDbContextAsync();

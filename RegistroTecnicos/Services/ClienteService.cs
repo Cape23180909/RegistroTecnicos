@@ -8,7 +8,6 @@ namespace RegistroTecnicos.Services;
 
 public class ClienteService(IDbContextFactory<Contexto> DbFactory)
 {
-
     //Metodo el cual Nos Identifica si ese tecnico esta registrado en la base de datos
     public async Task<bool> ExisteNombreCliente(string whatsApp, int id, string nombre)
     {
@@ -94,6 +93,4 @@ public class ClienteService(IDbContextFactory<Contexto> DbFactory)
 
         return cliente;
     }
-
-
 }

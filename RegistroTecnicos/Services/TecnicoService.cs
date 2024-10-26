@@ -7,7 +7,6 @@ namespace RegistroTecnicos.Services;
 
 public class TecnicoService(IDbContextFactory<Contexto> DbFactory)
 {
-  
     //Metodo Existe
     public async Task<bool> Existe(int id)
     {
