@@ -31,10 +31,6 @@
     <div class="col md-3 text-end">
         <a href="/Prioridad/Create" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
     </div>
-    </div>
-
-<div class="col md-3 text-end">
-    <a href="" class="btn btn-success"<Icon Name="IconName.Floppy"/> Crear</a>
 </div>
 
 <table class="table table-bordered  text-center">
@@ -86,8 +82,8 @@
         ListaPrioriades = await prioridadService.Listar(p => true);
     }
 
-       public async Task Buscar()
-      {
+    public async Task Buscar()
+    {
         if (string.IsNullOrWhiteSpace(valorFiltro))
         {
             ListaPrioriades = await prioridadService.Listar(P => true);
