@@ -93,6 +93,9 @@
 
         <div class="card-footer text-start">
             <p>Total de cotizaci&oacute;nes: @Listacotizacion.Count</p>
+            <div class="col-12 text-end ">
+                <label class="ms-5"><strong>Total</strong>$@Listacotizacion.Sum(c => c.Monto).ToString("N2")</label>
+            </div>
         </div>
     </div>
 </div>
