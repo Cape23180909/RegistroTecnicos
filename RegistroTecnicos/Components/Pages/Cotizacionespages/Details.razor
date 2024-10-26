@@ -5,24 +5,24 @@
 @inject NavigationManager navigationManager
 @rendermode InteractiveServer
 
-<PageTitle>Detalles de Cotización</PageTitle>
+<PageTitle>Detalles de Cotizaci&oacute;n</PageTitle>
 
 @if (cotizacion != null)
 {
     <div class="container">
         <div class="card shadow-header">
             <div class="card-header text-center">
-                <h5 style="font-weight:" class="font-weight-bold">Detalles de la Cotización</h5>
+                <h5 style="font-weight:" class="font-weight-bold">Detalles de la Cotizaci&oacute;n</h5>
             </div>
             <div class="container">
                 <div class="row">
                     <div class="col-md-6">
                         <div class="card-body">
                             <ul class="list-unstyled">
-                                <li><strong>CotizaciónId:</strong> @cotizacion.CotizacionId</li>
+                                <li><strong>Cotizaci&oacute;nId:</strong> @cotizacion.CotizacionId</li>
                                 <li><strong>Fecha:</strong> @(cotizacion.Fecha.HasValue ? cotizacion.Fecha.Value.ToShortDateString() : "No disponible")</li>
                                 <li><strong>Cliente:</strong> @(clientes.FirstOrDefault(c => c.ClienteId == cotizacion.ClienteId)?.Nombres ?? "No disponible")</li>
-                                <li><strong>Observación:</strong> @cotizacion.Observacion</li>
+                                <li><strong>Observaci&oacute;n:</strong> @cotizacion.Observacion</li>
                                 <li><strong>Monto Total:</strong> @cotizacion.Monto.ToString("C")</li>
                             </ul>
                         </div>
