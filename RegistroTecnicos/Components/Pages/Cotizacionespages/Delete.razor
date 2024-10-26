@@ -23,7 +23,7 @@
                                 <li><strong>Cotizaci&oacute;nId:</strong> @cotizacion.CotizacionId</li>
                                 <li><strong>Fecha:</strong> @(cotizacion.Fecha.HasValue ? cotizacion.Fecha.Value.ToShortDateString() : "No disponible")</li>
                                 <li><strong>Cliente:</strong> @(clientes.FirstOrDefault(c => c.ClienteId == cotizacion.ClienteId)?.Nombres ?? "No disponible")</li>
-                                <li><strong>Observación:</strong> @cotizacion.Observacion</li>
+                                <li><strong>Observaci&oacute;n:</strong> @cotizacion.Observacion</li>
                                 <li><strong>Monto Total:</strong> @cotizacion.Monto.ToString("C")</li>
                             </ul>
                         </div>
