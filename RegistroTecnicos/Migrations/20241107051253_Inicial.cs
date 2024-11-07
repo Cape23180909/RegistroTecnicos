@@ -44,22 +44,6 @@ namespace RegistroTecnicos.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Cotizaciones",
-                columns: table => new
-                {
-                    CotizacionId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    ClienteId = table.Column<int>(type: "int", nullable: false),
-                    Observacion = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Cotizaciones", x => x.CotizacionId);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Prioridades",
                 columns: table => new
                 {
@@ -87,6 +71,49 @@ namespace RegistroTecnicos.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Cotizaciones",
+                columns: table => new
+                {
+                    CotizacionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Fecha = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ClienteId = table.Column<int>(type: "int", nullable: false),
+                    Observacion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Monto = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cotizaciones", x => x.CotizacionId);
+                    table.ForeignKey(
+                        name: "FK_Cotizaciones_Clientes_ClienteId",
+                        column: x => x.ClienteId,
+                        principalTable: "Clientes",
+                        principalColumn: "ClienteId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tecnicos",
+                columns: table => new
+                {
+                    TecnicoId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Nombres = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Sueldohora = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    TipoTecnicoId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tecnicos", x => x.TecnicoId);
+                    table.ForeignKey(
+                        name: "FK_Tecnicos_TiposTecnicos_TipoTecnicoId",
+                        column: x => x.TipoTecnicoId,
+                        principalTable: "TiposTecnicos",
+                        principalColumn: "TipoTecnicoId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CotizacionesDetalles",
                 columns: table => new
                 {
@@ -111,27 +138,6 @@ namespace RegistroTecnicos.Migrations
                         column: x => x.CotizacionId,
                         principalTable: "Cotizaciones",
                         principalColumn: "CotizacionId",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Tecnicos",
-                columns: table => new
-                {
-                    TecnicoId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Nombres = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Sueldohora = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    TipoTecnicoId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Tecnicos", x => x.TecnicoId);
-                    table.ForeignKey(
-                        name: "FK_Tecnicos_TiposTecnicos_TipoTecnicoId",
-                        column: x => x.TipoTecnicoId,
-                        principalTable: "TiposTecnicos",
-                        principalColumn: "TipoTecnicoId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -208,6 +214,11 @@ namespace RegistroTecnicos.Migrations
                     { 2, 35.00m, "Ethener", 100.0, 50.00m },
                     { 3, 45.00m, "Switch", 100.0, 60.00m }
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Cotizaciones_ClienteId",
+                table: "Cotizaciones",
+                column: "ClienteId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_CotizacionesDetalles_ArticuloId",

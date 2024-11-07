@@ -20,12 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Migrations\20241023144221_Inicial.cs">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Update="appsettings.Development.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -12,7 +12,7 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20241023144221_Inicial")]
+    [Migration("20241107051253_Inicial")]
     partial class Inicial
     {
         /// <inheritdoc />
@@ -110,7 +110,8 @@ namespace RegistroTecnicos.Migrations
                         .IsRequired()
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Fecha")
+                    b.Property<DateTime?>("Fecha")
+                        .IsRequired()
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Monto")
@@ -121,6 +122,8 @@ namespace RegistroTecnicos.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("CotizacionId");
+
+                    b.HasIndex("ClienteId");
 
                     b.ToTable("Cotizaciones");
                 });
@@ -290,6 +293,17 @@ namespace RegistroTecnicos.Migrations
                     b.HasIndex("TrabajoId");
 
                     b.ToTable("TrabajosDetalles");
+                });
+
+            modelBuilder.Entity("RegistroTecnicos.Models.Cotizaciones", b =>
+                {
+                    b.HasOne("RegistroTecnicos.Models.Clientes", "Clientes")
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Clientes");
                 });
 
             modelBuilder.Entity("RegistroTecnicos.Models.CotizacionesDetalle", b =>
