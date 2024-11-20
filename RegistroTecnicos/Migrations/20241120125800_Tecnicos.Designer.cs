@@ -12,8 +12,8 @@ using RegistroTecnicos.DAL;
 namespace RegistroTecnicos.Migrations
 {
     [DbContext(typeof(Contexto))]
-    [Migration("20241107214722_Tecnico")]
-    partial class Tecnico
+    [Migration("20241120125800_Tecnicos")]
+    partial class Tecnicos
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
